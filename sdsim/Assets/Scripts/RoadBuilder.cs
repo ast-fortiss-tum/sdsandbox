@@ -37,6 +37,11 @@ public class RoadBuilder : MonoBehaviour {
 			//terToolkit.FullHydraulicErosion(1, 10.0f, 1.0f, .3f, 2.0f);
 			terToolkit.SmoothTerrain(10, 1.0f);
 		}
+
+		foreach(Texture2D texture in roadTextures)
+        {
+			Debug.Log(texture.name);
+        }
 	}
 
 	public void DestroyRoad()

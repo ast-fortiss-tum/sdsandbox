@@ -55,20 +55,33 @@ public class PathManager : MonoBehaviour {
 		InitNewRoad();
 	}
 
-	public void InitNewRoad()
+	public void InitNewRoad(bool usigenerated = false, bool usipointpath = false)
 	{
-		if(doMakeRandomPath)
+		if (!usigenerated && !usipointpath)
 		{
-			MakeRandomPath();
-		}
-		else if (doLoadScriptPath)
-		{
+			if (doMakeRandomPath)
+			{
+				MakeRandomPath();
+			}
+			else if (doLoadScriptPath)
+			{
+				MakeScriptedPath();
+			}
+			else if (doLoadPointPath)
+			{
+				MakePointPath();
+			}
+        }
+        else if(usigenerated)
+        {
+			pathToLoad = "USIScriptedTrack";
 			MakeScriptedPath();
-		}
-		else if(doLoadPointPath)
-		{
+        }
+        else
+        {
+			pathToLoad = "USIPointPath";
 			MakePointPath();
-		}
+        }
 
 		if(smoothPathIter > 0)
 			SmoothPath();
@@ -186,6 +199,7 @@ public class PathManager : MonoBehaviour {
 
 		if(script.Read(pathToLoad))
 		{
+			Debug.Log("Loaded scripted path");
 			path = new CarPath();
 			TrackParams tparams = new TrackParams();
 			tparams.numToSet = 0;
@@ -236,7 +250,7 @@ public class PathManager : MonoBehaviour {
 				}
 					
 			}
-		}
+        }
 	}
 
 	void MakeRandomPath()

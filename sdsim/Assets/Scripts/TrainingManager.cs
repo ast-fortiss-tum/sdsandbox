@@ -64,12 +64,12 @@ public class TrainingManager : MonoBehaviour {
 		roadBuilder.SetNewRoadVariation(iRun);
 	}
 
-	void StartNewRun()
+	void StartNewRun(bool usigenerated = false, bool usipointpath = false)
 	{
 		car.RestorePosRot();
 		pathManager.DestroyRoad();
 		SwapRoadToNewTextureVariation();
-		pathManager.InitNewRoad();
+		pathManager.InitNewRoad(usigenerated, usipointpath);
 		controller.StartDriving();
         RepositionOverheadCamera();
 	}
@@ -109,6 +109,16 @@ public class TrainingManager : MonoBehaviour {
     {
         StartNewRun();
         car.RequestFootBrake(1);
+    }
+
+	public void OnGeneratedUSITrack()
+    {
+		StartNewRun(true, false);
+    }
+
+	public void OnPointPathUSITrack()
+    {
+		StartNewRun(false, true);
     }
 
 	void OnPathDone()

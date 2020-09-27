@@ -47,7 +47,7 @@ public class TrackScriptElem
 
 public class TrackScript
 {
-    public List<TrackScriptElem> track;
+    public List<TrackScriptElem> track = new List<TrackScriptElem>();
 
     public void Build(TrackScriptElem el)
     {

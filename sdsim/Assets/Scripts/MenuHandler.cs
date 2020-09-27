@@ -174,4 +174,16 @@ public class MenuHandler : MonoBehaviour {
             spawner.EnsureOneCar();
     }
 
+    public void OnGeneratedUSITrack()
+    {
+        if (trainingManager != null)
+            trainingManager.OnGeneratedUSITrack();
+    }
+
+    public void OnPointPathUSITrack()
+    {
+        if (trainingManager != null)
+            trainingManager.OnPointPathUSITrack();
+    }
+
 }
