@@ -399,6 +399,11 @@ PrefabInstance:
       propertyPath: roadOffsets.Array.data[4]
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114798992687500020, guid: 89b891dc9d0fe46ffba6fbc78477652f,
+        type: 3}
+      propertyPath: roadTextures.Array.data[0]
+      value: 
+      objectReference: {fileID: 2800000, guid: f7aa6a8f989d441248c796758455a6b1, type: 3}
     - target: {fileID: 114920941206241424, guid: 89b891dc9d0fe46ffba6fbc78477652f,
         type: 3}
       propertyPath: menuObj
