@@ -52,7 +52,7 @@ public class PathManager : MonoBehaviour {
 		if(sameRandomPath)
 			Random.InitState(randSeed);
 
-		InitNewRoad();
+		InitNewRoad(true, false);
 	}
 
 	public void InitNewRoad(bool usigenerated = false, bool usipointpath = false)

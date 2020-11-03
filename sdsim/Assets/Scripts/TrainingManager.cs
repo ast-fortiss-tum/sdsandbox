@@ -64,7 +64,7 @@ public class TrainingManager : MonoBehaviour {
 		roadBuilder.SetNewRoadVariation(iRun);
 	}
 
-	void StartNewRun(bool usigenerated = false, bool usipointpath = false)
+	void StartNewRun(bool usigenerated = true, bool usipointpath = false)
 	{
 		car.RestorePosRot();
 		pathManager.DestroyRoad();
