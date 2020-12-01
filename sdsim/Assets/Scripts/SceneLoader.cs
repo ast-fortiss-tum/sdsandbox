@@ -10,16 +10,6 @@ public void LoadGenerateRoadScene()
     SceneManager.LoadSceneAsync(1);
 }
 
-public void LoadWarehouseScene()
-{
-    SceneManager.LoadSceneAsync(2);
-}
-
-public void LoadAVCScene()
-{
-    SceneManager.LoadSceneAsync(3);
-}
-
 public void LoadMenuScene()
 {
     SceneManager.LoadSceneAsync(0);
@@ -27,12 +17,12 @@ public void LoadMenuScene()
 
 public void LoadGeneratedTrackScene()
 {
-    SceneManager.LoadSceneAsync(4);
+    SceneManager.LoadSceneAsync(2);
 }
 
-public void LoadRoboRacingLeague1Scene()
+public void LoadUSITrackScene()
 {
-    SceneManager.LoadSceneAsync(6);
+    SceneManager.LoadSceneAsync(3);
 }
 
 public void QuitApplication()

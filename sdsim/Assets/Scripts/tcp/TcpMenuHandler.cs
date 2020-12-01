@@ -101,21 +101,13 @@ namespace tk
             {
                 loader.LoadGenerateRoadScene();
             }
-            else if (scene_name == "warehouse")
-            {
-                loader.LoadWarehouseScene();
-            }
-            else if (scene_name == "sparkfun_avc")
-            {
-                loader.LoadAVCScene();
-            }
             else if (scene_name == "generated_track")
             {
                 loader.LoadGeneratedTrackScene();
             }
-            else if (scene_name == "roboracingleague_1")
+            else if (scene_name == "usi_track")
             {
-                loader.LoadRoboRacingLeague1Scene();
+                loader.LoadUSITrackScene();
             }
         }
         
