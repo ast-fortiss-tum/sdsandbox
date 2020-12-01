@@ -6,8 +6,8 @@ using UnityEngine;
 public class CameraSensor : MonoBehaviour {
 
 	public Camera sensorCam;
-	public int width = 256;
-	public int height = 256;
+	public static int width = 224;
+	public static int height = 224;
 	public int depth = 3;
 	public string img_enc = "JPG"; //accepts JPG, PNG, TGA
 	Texture2D tex;
@@ -53,7 +53,7 @@ public class CameraSensor : MonoBehaviour {
 		RenderTexture currentRT = RenderTexture.active;
 		RenderTexture.active = cam.targetTexture;
 		cam.Render();
-		tex.ReadPixels(new Rect(0, 0, cam.targetTexture.width, cam.targetTexture.height), 0, 0);
+		tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
 		tex.Apply();
 		RenderTexture.active = currentRT;
 
