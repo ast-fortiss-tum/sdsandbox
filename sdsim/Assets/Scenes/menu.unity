@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 51810841}
   - component: {fileID: 51810840}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Formula USI Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -190,7 +190,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Formula USI
+  m_Text: Pandemic Edition
 --- !u!222 &51810841
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -236,7 +236,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.08648649, y: 0.10580027}
   m_AnchorMax: {x: 0.31016454, y: 0.37784544}
-  m_AnchoredPosition: {x: 537, y: 473}
+  m_AnchoredPosition: {x: 572, y: 397}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &59808420
@@ -1429,7 +1429,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 27, y: -214}
+  m_AnchoredPosition: {x: 214, y: -254}
   m_SizeDelta: {x: 404, y: 42.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &792944356
@@ -1452,10 +1452,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 32
+    m_FontSize: 18
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 3
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -2671,7 +2671,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.014492754, y: -0.29142156}
   m_AnchorMax: {x: 1, y: -0.028963415}
-  m_AnchoredPosition: {x: 0, y: 3.9999847}
+  m_AnchoredPosition: {x: 0, y: 4}
   m_SizeDelta: {x: 0, y: -8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1498640657
@@ -3136,7 +3136,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.3832992, y: 0.10580027}
   m_AnchorMax: {x: 0.61600006, y: 0.37784544}
-  m_AnchoredPosition: {x: 537, y: 472.99997}
+  m_AnchoredPosition: {x: 537, y: 391}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2047057428
