@@ -22,11 +22,11 @@ public class PathManager : MonoBehaviour {
 
 	public int randSeed = 2;
 
-	public bool doMakeRandomPath = true;
+	public bool doMakeRandomPath = false;
 
 	public bool doLoadScriptPath = false;
 
-	public bool doLoadPointPath = false;
+	public bool doLoadPointPath = true;
 
 	public bool doBuildRoad = false;
 
