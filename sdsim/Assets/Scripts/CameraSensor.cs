@@ -6,8 +6,8 @@ using UnityEngine;
 public class CameraSensor : MonoBehaviour {
 
 	public Camera sensorCam;
-	public static int width = 224;
-	public static int height = 224;
+	public static int width = 320;
+	public static int height = 240;
 	public int depth = 3;
 	public string img_enc = "JPG"; //accepts JPG, PNG, TGA
 	Texture2D tex;

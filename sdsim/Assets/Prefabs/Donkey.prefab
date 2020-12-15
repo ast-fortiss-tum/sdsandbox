@@ -3454,7 +3454,7 @@ Camera:
   m_projectionMatrixMode: 2
   m_GateFitMode: 2
   m_FOVAxisMode: 0
-  m_SensorSize: {x: 4.8, y: 3.5}
+  m_SensorSize: {x: 10.26, y: 7.49}
   m_LensShift: {x: 0, y: 0}
   m_FocalLength: 3.15
   m_NormalizedViewPortRect:
@@ -3465,7 +3465,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 58.109207
+  field of view: 99.86417
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -3496,8 +3496,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensorCam: {fileID: 20774512129789012}
-  width: 160
-  height: 120
   depth: 3
   img_enc: JPG
 --- !u!114 &114269225094589410
