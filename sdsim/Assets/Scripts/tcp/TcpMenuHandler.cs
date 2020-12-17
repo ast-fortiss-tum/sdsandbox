@@ -105,7 +105,7 @@ namespace tk
             {
                 loader.LoadGeneratedTrackScene();
             }
-            else if (scene_name == "usi_track")
+            else 
             {
                 loader.LoadUSITrackScene();
             }
