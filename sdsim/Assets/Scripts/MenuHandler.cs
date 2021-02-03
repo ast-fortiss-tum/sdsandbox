@@ -15,6 +15,7 @@ public class MenuHandler : MonoBehaviour {
     public GameObject PIDControls;
     public TrainingManager trainingManager;
 
+
     public void Awake()
     {
         //keep it processing even when not in focus.
@@ -172,6 +173,11 @@ public class MenuHandler : MonoBehaviour {
 
         if (spawner)
             spawner.EnsureOneCar();
+    }
+
+    public void OnRandomizeEnvironment()
+    {
+        DomainRandomization.useRandomization = true;
     }
 
 }
