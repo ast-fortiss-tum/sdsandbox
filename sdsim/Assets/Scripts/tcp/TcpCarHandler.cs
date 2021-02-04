@@ -107,7 +107,7 @@ namespace tk
             json.AddField("speed", car.GetVelocity().magnitude);
             json.AddField("image", System.Convert.ToBase64String(camSensor.GetImageBytes()));
 
-            json.AddField("hit", car.GetLastCollision());
+            json.AddField("hit", car.GetLastCollisionName());
             car.ClearLastCollision();
 
             Transform tm = car.GetTransform();

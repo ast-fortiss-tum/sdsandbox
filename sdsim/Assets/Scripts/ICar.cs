@@ -51,6 +51,6 @@ public interface ICar
     float GetMaxSteering();
 
 	//get the name of the last object we collided with
-	string GetLastCollision();
+	string GetLastCollisionName();
 	void ClearLastCollision();
 }

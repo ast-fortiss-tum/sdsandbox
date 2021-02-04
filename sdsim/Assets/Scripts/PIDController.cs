@@ -19,7 +19,7 @@ public class PIDController : MonoBehaviour {
 
 	//Ks is the proportion of the current err that
 	//we use to change throtlle.
-	public float Kt = 1.0f; 
+	public float Kt = 1.0f;
 
 	float diffErr = 0f;
 	public float prevErr = 0f;

@@ -24,6 +24,8 @@ public class Car : MonoBehaviour, ICar {
 
 	public float length = 1.7f;
 
+	public int nrExitedTriggers = 0;
+
 	Rigidbody rb;
 
 	//for logging
@@ -37,7 +39,8 @@ public class Car : MonoBehaviour, ICar {
     public float maxSteer = 16.0f;
 
 	//name of the last object we hit.
-	public string last_collision = "none";
+	public Collision last_collision = null;
+	public string last_collision_name = "none";
 
 	// Use this for initialization
 	void Awake () 
@@ -251,18 +254,30 @@ public class Car : MonoBehaviour, ICar {
 	}
 
 	//get the name of the last object we collided with
-	public string GetLastCollision()
+	public string GetLastCollisionName()
 	{
+		return last_collision_name;
+	}
+
+	public Collision GetLastCollision() {
 		return last_collision;
 	}
 
+
 	public void ClearLastCollision()
 	{
-		last_collision = "none";
+		last_collision_name = "none";
+		last_collision = null;
 	}
 
 	void OnCollisionEnter(Collision col)
 	{
-		last_collision = col.gameObject.name;
+		last_collision_name = col.gameObject.name;
+		last_collision = col;
+	}
+
+	void OnTriggerExit(Collider collider)
+    {
+		nrExitedTriggers += 1;
 	}
 }

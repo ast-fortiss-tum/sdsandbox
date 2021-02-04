@@ -122,7 +122,7 @@ public class UnityStandardCarAdapter : MonoBehaviour, ICar {
 	}
 
 		//get the name of the last object we collided with
-	public string GetLastCollision()
+	public string GetLastCollisionName()
 	{
 		return last_collision;
 	}
