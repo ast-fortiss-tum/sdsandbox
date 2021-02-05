@@ -5,17 +5,17 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>English</string>
     <key>CFBundleExecutable</key>
-    <string>donkey_sim</string>
+    <string>FUSI Simulator</string>
     <key>CFBundleGetInfoString</key>
     <string>Unity Player version 2019.3.0f1 (ffacea4b84e7). (c) 2019 Unity Technologies ApS. All rights reserved.</string>
     <key>CFBundleIconFile</key>
     <string>PlayerIcon.icns</string>
     <key>CFBundleIdentifier</key>
-    <string>com.DonkeyCar.donkeysim</string>
+    <string>com.DonkeyCar.FUSISimulator</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>donkey_sim</string>
+    <string>FUSI Simulator</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

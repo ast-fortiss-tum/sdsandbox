@@ -1540,7 +1540,7 @@ GameObject:
   - component: {fileID: 6662001079554798853}
   m_Layer: 0
   m_Name: Donkey
-  m_TagString: Untagged
+  m_TagString: DonkeyCar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1624,11 +1624,12 @@ MonoBehaviour:
   startPos: {x: 0, y: 0, z: 0}
   startRot: {x: 0, y: 0, z: 0, w: 0}
   length: 1.7
+  nrExitedTriggers: 0
   lastSteer: 0
   lastAccel: 0
   activity: keep_lane
   maxSteer: 7
-  last_collision: none
+  last_collision_name: none
 --- !u!114 &114314152752413966
 MonoBehaviour:
   m_ObjectHideFlags: 0
