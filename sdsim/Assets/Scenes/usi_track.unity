@@ -3142,6 +3142,11 @@ PrefabInstance:
       propertyPath: logger
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 114801902883918354, guid: e9fff5699d2384074977a12cf04b4db8,
+        type: 3}
+      propertyPath: m_MaxValue
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 224372064716631678, guid: e9fff5699d2384074977a12cf04b4db8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7492,6 +7497,16 @@ PrefabInstance:
       propertyPath: startPos
       value: 
       objectReference: {fileID: 318556693}
+    - target: {fileID: 114576669822105592, guid: 89b891dc9d0fe46ffba6fbc78477652f,
+        type: 3}
+      propertyPath: sameRandomPath
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114576669822105592, guid: 89b891dc9d0fe46ffba6fbc78477652f,
+        type: 3}
+      propertyPath: smoothPathIter
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 114920941206241424, guid: 89b891dc9d0fe46ffba6fbc78477652f,
         type: 3}
       propertyPath: menuObj
