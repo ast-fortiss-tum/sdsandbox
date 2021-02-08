@@ -18,9 +18,7 @@ public class PointPathStorer : MonoBehaviour
             text += '\n';
         }
 
-
         System.IO.File.WriteAllText("Assets/Resources/LatestWaypoints.txt", text);
-
-        Debug.Log("Point-Path found and written to LatestWaypoints.txt");
+        Debug.Log(wayPoints.Length + " Waypoints found and written to LatestWaypoints.txt");
     }
 }
