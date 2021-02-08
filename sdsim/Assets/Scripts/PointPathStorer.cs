@@ -10,6 +10,7 @@ public class PointPathStorer : MonoBehaviour
     {
         GameObject[] wayPoints = GameObject.FindGameObjectsWithTag("pathNode");
 
+
         string text = "";
         foreach (GameObject waypoint in wayPoints)
         {
