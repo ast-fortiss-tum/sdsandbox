@@ -11,18 +11,19 @@ public class StatsDisplayer : MonoBehaviour
     public static bool carStarted;
 
     // Stats
-    public static int lap;
+    public static int lap = 1;
     public static float time;
     public static float prevTime;
     public static int offTrackCounter;
     public static float xte;
     public static float maxXte;
+    public static float steerVar;
     public static List<float> steers;
 
     // Parameters
     public float offTrackXTE; // 1.4
     private bool isOffTrack = false;
-    private float startTime;
+    public static float startTime;
 
     // Labels to update
     private Text lapLabel;
@@ -46,12 +47,12 @@ public class StatsDisplayer : MonoBehaviour
     void Start()
     {
         // Initializing stats
-        lap = 1;
         time = 0;
         prevTime = 0;
         offTrackCounter = 0;
         xte = 0;
         maxXte = 0;
+        steerVar = 0;
         steers = new List<float>();
 
         // Initializing PM
@@ -155,24 +156,30 @@ public class StatsDisplayer : MonoBehaviour
             if(car == null) { return; }
         }
 
-        // Updating lap
-        if (car != null && lap < car.nrExitedTriggers + 1)
-        {
-            lap = car.nrExitedTriggers + 1;
-
-            float finishTime = Time.time;
-            prevTime = finishTime- startTime;
-            startTime = finishTime;
-        }
-
         // Updating time
         time = Time.time - startTime;
 
-        // Updating XTE
-        // pm.path.GetCrossTrackErr(car.GetTransform().position + (car.GetTransform().forward * car.GetVelocity().magnitude), ref xte); // Alternative
-        if (pm != null && car != null)
+        // Updating steering infos
+        steers.Add(car.GetSteering());
+
+        if (pm != null)
         {
-            pm.path.GetCrossTrackErr(car.GetTransform().position, ref xte);
+            // Updating XTE
+            if (!pm.path.GetCrossTrackErr(car.GetTransform().position, ref xte))
+            {
+                // Lap finished, looping
+                pm.path.ResetActiveSpan();
+
+                // Counting lap
+                lap += 1;
+
+                // Updating prev. lap time and current starting time
+                float finishTime = Time.time;
+                prevTime = finishTime - startTime;
+                startTime = finishTime;
+
+                updateSteerVar();
+            };
 
             // Updating Out-of-track counter
             if (Math.Abs(xte) > Math.Abs(offTrackXTE))
@@ -194,9 +201,6 @@ public class StatsDisplayer : MonoBehaviour
         {
             maxXte = Math.Abs(xte);
         }
-
-        // Updating steering infos
-        steers.Add(car.GetSteering());
     }
 
     private void displayStats()
@@ -207,10 +211,10 @@ public class StatsDisplayer : MonoBehaviour
         outOfTrackLabel.text = outOfTrackLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + offTrackCounter;
         xteLabel.text = xteLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + xte;
         xteMaxLabel.text = xteMaxLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + maxXte;
-        steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + getVar(steers, getMean(steers));
+        steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + steerVar;
     }
 
-    private float getMean(List<float> array)
+    private static float getMean(List<float> array)
     {
         float mean = 0;
 
@@ -222,7 +226,7 @@ public class StatsDisplayer : MonoBehaviour
         return mean / array.Count;
     }
 
-    private float getVar(List<float> array, float mean)
+    private static float getVar(List<float> array, float mean)
     {
         // Returns variance
         float variance = 0;
@@ -233,5 +237,12 @@ public class StatsDisplayer : MonoBehaviour
         }
 
         return variance / (array.Count);
+    }
+
+    public static void updateSteerVar()
+    {
+        // Updating steering variance for this lap
+        steerVar = getVar(steers, getMean(steers));
+        steers.Clear();
     }
 }
