@@ -181,7 +181,7 @@ public class PIDController : MonoBehaviour {
                 pm.path.ResetActiveSpan();
 
 				// Update StatsDisplayer stats
-				updateStatsDisplayerStats();
+				StatsDisplayer.endOfLapUpdates();
 
 				//Let logger know we looped. Sorry an event would be cleaner.
 				var foundObjects = FindObjectsOfType<Logger>();
@@ -248,18 +248,5 @@ public class PIDController : MonoBehaviour {
 		absTotalError += Mathf.Abs(carPosErr) + 
 		                 AccelErrFactor * car.GetAccel().magnitude;
 
-	}
-
-    private void updateStatsDisplayerStats()
-    {
-		// Update statsdisplayer lap
-		StatsDisplayer.lap += 1;
-
-		float finishTime = Time.time;
-		StatsDisplayer.prevTime = finishTime - StatsDisplayer.startTime;
-		StatsDisplayer.startTime = finishTime;
-
-		// Updating steering variance for this lap
-		StatsDisplayer.updateSteerVar();
 	}
 }

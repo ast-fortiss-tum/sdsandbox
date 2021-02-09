@@ -10,15 +10,22 @@ public class StatsDisplayer : MonoBehaviour
     // Flag to see if car started
     public static bool carStarted;
 
+    // Log informations / histories
+    public static bool writeLog = true;
+    public static List<float> lapTimesHistory;
+    public static List<float> offTrackHistory;
+    public static List<float> maxXteHistory;
+    public static List<float> steersVarsHistory;
+
     // Stats
     public static int lap = 1;
-    public static float time;
-    public static float prevTime;
+    public static float lapTime;
+    public static float prevLapTime;
     public static int offTrackCounter;
     public static float xte;
     public static float maxXte;
-    public static float steerVar;
-    public static List<float> steers;
+    public static float lapSteerVar;
+    public static List<float> lapSteers;
 
     // Parameters
     public float offTrackXTE; // 1.4
@@ -47,13 +54,22 @@ public class StatsDisplayer : MonoBehaviour
     void Start()
     {
         // Initializing stats
-        time = 0;
-        prevTime = 0;
+        lapTime = 0;
+        prevLapTime = 0;
         offTrackCounter = 0;
         xte = 0;
         maxXte = 0;
-        steerVar = 0;
-        steers = new List<float>();
+        lapSteerVar = 0;
+        lapSteers = new List<float>();
+
+        // Initializing histories
+        if (writeLog)
+        {
+            lapTimesHistory = new List<float>();
+            offTrackHistory = new List<float>();
+            maxXteHistory = new List<float>();
+            steersVarsHistory = new List<float>();
+        }
 
         // Initializing PM
         pm = FindObjectOfType<PathManager>();
@@ -99,6 +115,41 @@ public class StatsDisplayer : MonoBehaviour
         {
             getUpdatedStats();
             displayStats();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (writeLog)
+        {
+            DateTime now = DateTime.Now;
+            string hour = "" + now.Hour;
+            string minute = "" + now.Minute;
+
+            if(now.Hour < 10)
+            {
+                hour = "0" + hour;
+            }
+
+            if(now.Minute < 10)
+            {
+                minute = "0" + minute;
+            }
+
+            string filename = "Online Testing - " + now.Day + "-"+ now.Month + "-" + now.Year + "-" + hour + minute;
+            string filepath = "Assets/Resources/" + filename + ".txt";
+
+            string text = "Lap time; Cumulative off-track counter; Cumulative Max XTE; Lap steer variance;\n";
+            for(int i = 0; i<lapTimesHistory.Count; i++)
+            {
+                float l = lapTimesHistory[i];
+                float o = offTrackHistory[i];
+                float m = maxXteHistory[i];
+                float v = steersVarsHistory[i];
+                text += l + ";" + o + ";" + m + ";" + v + ";\n";
+            }
+
+            System.IO.File.WriteAllText(filepath, text);
         }
     }
 
@@ -157,10 +208,10 @@ public class StatsDisplayer : MonoBehaviour
         }
 
         // Updating time
-        time = Time.time - startTime;
+        lapTime = Time.time - startTime;
 
         // Updating steering infos
-        steers.Add(car.GetSteering());
+        lapSteers.Add(car.GetSteering());
 
         if (pm != null)
         {
@@ -170,15 +221,7 @@ public class StatsDisplayer : MonoBehaviour
                 // Lap finished, looping
                 pm.path.ResetActiveSpan();
 
-                // Counting lap
-                lap += 1;
-
-                // Updating prev. lap time and current starting time
-                float finishTime = Time.time;
-                prevTime = finishTime - startTime;
-                startTime = finishTime;
-
-                updateSteerVar();
+                endOfLapUpdates();
             };
 
             // Updating Out-of-track counter
@@ -203,15 +246,39 @@ public class StatsDisplayer : MonoBehaviour
         }
     }
 
+    public static void endOfLapUpdates()
+    {
+        // Counting lap
+        lap += 1;
+
+        // Updating prev. lap time and current starting time
+        float finishTime = Time.time;
+        prevLapTime = finishTime - startTime;
+        startTime = finishTime;
+
+        // Updating steering variance for this lap
+        lapSteerVar = getVar(lapSteers, getMean(lapSteers));
+        lapSteers.Clear();
+
+        // Updating log infos
+        if (writeLog)
+        {
+            lapTimesHistory.Add(prevLapTime);
+            offTrackHistory.Add(offTrackCounter);
+            maxXteHistory.Add(maxXte);
+            steersVarsHistory.Add(lapSteerVar);
+        }
+    }
+
     private void displayStats()
     {
         lapLabel.text = lapLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + lap;
-        timeLabel.text = timeLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + time;
-        prevTimeLabel.text = prevTimeLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + prevTime;
+        timeLabel.text = timeLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + lapTime;
+        prevTimeLabel.text = prevTimeLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + prevLapTime;
         outOfTrackLabel.text = outOfTrackLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + offTrackCounter;
         xteLabel.text = xteLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + xte;
         xteMaxLabel.text = xteMaxLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + maxXte;
-        steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + steerVar;
+        steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + lapSteerVar;
     }
 
     private static float getMean(List<float> array)
@@ -237,12 +304,5 @@ public class StatsDisplayer : MonoBehaviour
         }
 
         return variance / (array.Count);
-    }
-
-    public static void updateSteerVar()
-    {
-        // Updating steering variance for this lap
-        steerVar = getVar(steers, getMean(steers));
-        steers.Clear();
     }
 }
