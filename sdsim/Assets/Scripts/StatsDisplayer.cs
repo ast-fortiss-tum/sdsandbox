@@ -137,7 +137,9 @@ public class StatsDisplayer : MonoBehaviour
             }
 
             string filename = "Online Testing - " + now.Day + "-"+ now.Month + "-" + now.Year + "-" + hour + minute;
-            string filepath = "Assets/Resources/" + filename + ".txt";
+
+            // MacOS
+            string filepath = Application.dataPath + "/" + filename + ".csv";
 
             string text = "Lap time; Cumulative off-track counter; Cumulative Max XTE; Lap steer variance;\n";
             for(int i = 0; i<lapTimesHistory.Count; i++)
@@ -150,6 +152,7 @@ public class StatsDisplayer : MonoBehaviour
             }
 
             System.IO.File.WriteAllText(filepath, text);
+            Debug.Log("Log file written to " + filepath);
         }
     }
 
