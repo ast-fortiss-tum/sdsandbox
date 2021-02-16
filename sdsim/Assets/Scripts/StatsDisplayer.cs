@@ -10,6 +10,9 @@ public class StatsDisplayer : MonoBehaviour
     // Flag to see if car started
     public static bool carStarted;
 
+    // Script start time
+    public static DateTime scriptStartTime;
+
     // Log informations / histories per Lap
     public static bool writeLog = true;
     public static List<float> timesHistory;
@@ -31,7 +34,7 @@ public class StatsDisplayer : MonoBehaviour
     public static int offTrackCounter;
     public static float xte;
     public static float maxXte;
-    public static float lapSteerVar;
+    public static float lastLapSteerVar;
 
     // Lap frames
     public static List<float> lapXtes;
@@ -64,13 +67,16 @@ public class StatsDisplayer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Updating script start time
+        scriptStartTime = DateTime.Now;
+
         // Initializing stats
         lapTime = 0;
         prevLapTime = 0;
         offTrackCounter = 0;
         xte = 0;
         maxXte = 0;
-        lapSteerVar = 0;
+        lastLapSteerVar = 0;
 
         lapXtes = new List<float>();
         lapSteers = new List<float>();
@@ -142,24 +148,23 @@ public class StatsDisplayer : MonoBehaviour
     {
         if (writeLog)
         {
-            DateTime now = DateTime.Now;
-            string hour = "" + now.Hour;
-            string minute = "" + now.Minute;
+            string hour = "" + scriptStartTime.Hour;
+            string minute = "" + scriptStartTime.Minute;
 
-            if(now.Hour < 10)
+            if(scriptStartTime.Hour < 10)
             {
                 hour = "0" + hour;
             }
 
-            if(now.Minute < 10)
+            if(scriptStartTime.Minute < 10)
             {
                 minute = "0" + minute;
             }
 
-            string filename = "Online Testing - " + now.Day + "-"+ now.Month + "-" + now.Year + "-" + hour + minute;
+            string filename = scriptStartTime.Year + "-"+ scriptStartTime.Month + "-" + scriptStartTime.Day + "-" + hour +"h_" + minute+"m";
 
             // MacOS
-            string filepath = Application.dataPath + "/" + filename + ".csv";
+            string filepath = Application.dataPath + "/Testing/" + filename + ".csv";
 
             string text = "Lap time; Off-track; Max XTE; XTE avg; XTE var; Steer avg; Steer var; Speed avg; Speed var; Crashes;\n";
             for(int i = 0; i<timesHistory.Count; i++)
@@ -312,7 +317,8 @@ public class StatsDisplayer : MonoBehaviour
             // Steer
             float lapsteeravg = getMean(lapSteers);
             steersAvgHistory.Add(lapsteeravg);
-            steersVarsHistory.Add(getVar(lapSteers, lapsteeravg));
+            lastLapSteerVar = getVar(lapSteers, lapsteeravg);
+            steersVarsHistory.Add(lastLapSteerVar);
 
             // Speed
             float lapspeedavg = getMean(lapSpeeds);
@@ -342,7 +348,7 @@ public class StatsDisplayer : MonoBehaviour
         outOfTrackLabel.text = outOfTrackLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + offTrackCounter;
         xteLabel.text = xteLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + xte;
         xteMaxLabel.text = xteMaxLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + maxXte;
-        steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + lapSteerVar;
+        steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + lastLapSteerVar;
     }
 
     private static float getMean(List<float> array)
@@ -369,4 +375,5 @@ public class StatsDisplayer : MonoBehaviour
 
         return variance / (array.Count);
     }
+
 }
