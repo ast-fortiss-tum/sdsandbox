@@ -11,6 +11,7 @@ TagManager:
   - Waypoints
   - FinishLine
   - DonkeyCar
+  - DonkeyCamera
   layers:
   - Default
   - TransparentFX
