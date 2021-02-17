@@ -258,7 +258,7 @@ public class StatsDisplayer : MonoBehaviour
         if (pm != null)
         {
             // Updating XTE
-            if (!pm.path.GetCrossTrackErr(car.GetTransform().position, ref xte))
+            if (!pm.path.GetCrossTrackErr(car.GetTransform(), ref xte))
             {
                 // Lap finished, looping
                 pm.path.ResetActiveSpan();

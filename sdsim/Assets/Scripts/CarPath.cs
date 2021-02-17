@@ -98,4 +98,61 @@ public class CarPath
 		return true;
 	}
 
+	// USI Track overload to deal with 'skipped' waypoints
+	public bool GetCrossTrackErr(Transform transform, ref float err)
+	{
+		Vector3 pos = transform.position;
+
+		if (iActiveSpan >= nodes.Count - 2)
+			return false;
+
+		PathNode a = nodes[iActiveSpan];
+		PathNode b = nodes[iActiveSpan + 1];
+
+		//2d path.
+		pos.y = a.pos.y;
+
+		LineSeg3d pathSeg = new LineSeg3d(ref a.pos, ref b.pos);
+
+		pathSeg.Draw(Color.green);
+
+		LineSeg3d.SegResult segRes = new LineSeg3d.SegResult();
+
+		Vector3 closePt = pathSeg.ClosestPointOnSegmentTo(ref pos, ref segRes);
+
+		Debug.DrawLine(a.pos, closePt, Color.blue);
+
+		if (segRes == LineSeg3d.SegResult.GreaterThanEnd || angle(transform, b) > 90)
+		{
+			iActiveSpan++;
+		}
+		else if (segRes == LineSeg3d.SegResult.LessThanOrigin)
+		{
+			if (iActiveSpan > 0)
+				iActiveSpan--;
+		}
+
+		Vector3 errVec = pathSeg.ClosestVectorTo(ref pos);
+
+		Debug.DrawRay(closePt, errVec, Color.white);
+
+		float sign = 1.0f;
+
+		Vector3 cp = Vector3.Cross(pathSeg.m_dir.normalized, errVec.normalized);
+
+		if (cp.y > 0.0f)
+			sign = -1f;
+
+		err = errVec.magnitude * sign;
+		return true;
+	}
+
+	// Computes the angle at which the car looks at the next waypoint
+	private float angle(Transform transform, PathNode waypoint)
+    {
+		Vector3 heading = waypoint.pos - transform.position;
+		heading.y = 0;
+
+		return Quaternion.Angle(transform.rotation, Quaternion.LookRotation(heading));
+    }
 }
