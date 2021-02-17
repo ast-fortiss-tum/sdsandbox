@@ -103,7 +103,7 @@ public class CarPath
 	{
 		Vector3 pos = transform.position;
 
-		if (iActiveSpan >= nodes.Count - 2)
+		if (iActiveSpan >= nodes.Count - 1)
 			return false;
 
 		PathNode a = nodes[iActiveSpan];

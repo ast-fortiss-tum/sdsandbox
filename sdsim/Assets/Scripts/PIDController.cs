@@ -172,9 +172,11 @@ public class PIDController : MonoBehaviour {
 
 		float velMag = car.GetVelocity().magnitude;
 
+		/*
 		Vector3 samplePos = car.GetTransform().position + (car.GetTransform().forward * velMag * Kv);
-
 		if(!pm.path.GetCrossTrackErr(samplePos, ref err))
+		*/
+		if(!pm.path.GetCrossTrackErr(car.GetTransform(), ref err))
 		{
             if(looping)
             {
