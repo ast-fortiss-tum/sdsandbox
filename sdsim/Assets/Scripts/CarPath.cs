@@ -122,7 +122,7 @@ public class CarPath
 
 		Debug.DrawLine(a.pos, closePt, Color.blue);
 
-		if (segRes == LineSeg3d.SegResult.GreaterThanEnd || angle(transform, b) > 90)
+		if (segRes == LineSeg3d.SegResult.GreaterThanEnd || Utilities.angle(transform, b) > 90)
 		{
 			iActiveSpan++;
 		}
@@ -146,13 +146,4 @@ public class CarPath
 		err = errVec.magnitude * sign;
 		return true;
 	}
-
-	// Computes the angle at which the car looks at the next waypoint
-	private float angle(Transform transform, PathNode waypoint)
-    {
-		Vector3 heading = waypoint.pos - transform.position;
-		heading.y = 0;
-
-		return Quaternion.Angle(transform.rotation, Quaternion.LookRotation(heading));
-    }
 }

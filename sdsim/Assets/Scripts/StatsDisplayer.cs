@@ -101,7 +101,9 @@ public class StatsDisplayer : MonoBehaviour
         pm = FindObjectOfType<PathManager>();
 
         // Initializing Car
-        tryGetCar();
+        car = (Car)Utilities.tryGetCar("DonkeyCar");
+        if (car != null)
+            startingCarPosition = car.transform.position;
 
         // Getting labels to update
         GameObject statsPanel = GameObject.Find("StatsPanel");
@@ -129,7 +131,9 @@ public class StatsDisplayer : MonoBehaviour
     {
         if (car == null)
         {
-            tryGetCar();
+            car = (Car)Utilities.tryGetCar("DonkeyCar");
+            if (car != null)
+                startingCarPosition = car.transform.position;
         }
 
         if (!carStarted)
@@ -188,17 +192,6 @@ public class StatsDisplayer : MonoBehaviour
         }
     }
 
-    private void tryGetCar()
-    {
-        GameObject carObj = GameObject.FindGameObjectWithTag("DonkeyCar");
-
-        if (carObj != null)
-        {
-            car = (Car)carObj.GetComponent<ICar>();
-            startingCarPosition = car.startPos;
-        }
-    }
-
     private bool checkCarStarted()
     {
         if (carStarted)
@@ -237,7 +230,7 @@ public class StatsDisplayer : MonoBehaviour
     {
         if(car == null)
         {
-            tryGetCar();
+            Utilities.tryGetCar("DonkeyCar");
 
             if(car == null) { return; }
         }
@@ -249,21 +242,25 @@ public class StatsDisplayer : MonoBehaviour
         lapSteers.Add(Math.Abs(car.GetSteering()));
         lapSpeeds.Add(Math.Abs(car.GetVelocity().magnitude));
 
-        if(car.GetLastCollision() != null)
-        {
-            lapCrashes += 1;
-            car.ClearLastCollision();
-        }
-
         if (pm != null)
         {
             // Updating XTE
             if (!pm.path.GetCrossTrackErr(car.GetTransform(), ref xte))
             {
-                // Lap finished, looping
-                pm.path.ResetActiveSpan();
-
-                endOfLapUpdates();
+                
+                if (car.GetLastCollision() != null)
+                {
+                    // Car crashed
+                    lapCrashes += 1;
+                    car.ClearLastCollision();
+                } else {
+                    if (Utilities.carIsGoingForward(car))
+                    {
+                        // Lap finished, looping
+                        pm.path.ResetActiveSpan();
+                        endOfLapUpdates();
+                    }
+                }
             };
 
             // Updating xte infos
@@ -309,21 +306,21 @@ public class StatsDisplayer : MonoBehaviour
             offTrackHistory.Add(offTrackCounter);
 
             // XTE
-            float lapxteavg = getMean(lapXtes);
+            float lapxteavg = Utilities.getMean(lapXtes);
             xteAvgHistory.Add(lapxteavg);
-            xteVarHistory.Add(getVar(lapXtes, lapxteavg));
+            xteVarHistory.Add(Utilities.getVar(lapXtes, lapxteavg));
             maxXteHistory.Add(maxXte);
 
             // Steer
-            float lapsteeravg = getMean(lapSteers);
+            float lapsteeravg = Utilities.getMean(lapSteers);
             steersAvgHistory.Add(lapsteeravg);
-            lastLapSteerVar = getVar(lapSteers, lapsteeravg);
+            lastLapSteerVar = Utilities.getVar(lapSteers, lapsteeravg);
             steersVarsHistory.Add(lastLapSteerVar);
 
             // Speed
-            float lapspeedavg = getMean(lapSpeeds);
+            float lapspeedavg = Utilities.getMean(lapSpeeds);
             speedAvgHistory.Add(lapspeedavg);
-            speedVarHistory.Add(getVar(lapSpeeds, lapspeedavg));
+            speedVarHistory.Add(Utilities.getVar(lapSpeeds, lapspeedavg));
 
             // Crashes
             crashesHistory.Add(lapCrashes);
@@ -350,30 +347,4 @@ public class StatsDisplayer : MonoBehaviour
         xteMaxLabel.text = xteMaxLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + maxXte;
         steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + lastLapSteerVar;
     }
-
-    private static float getMean(List<float> array)
-    {
-        float mean = 0;
-
-        foreach (float f in array)
-        {
-            mean += f;
-        }
-
-        return mean / array.Count;
-    }
-
-    private static float getVar(List<float> array, float mean)
-    {
-        // Returns variance
-        float variance = 0;
-
-        foreach(float f in array)
-        {
-            variance += (f - mean) * (f - mean);
-        }
-
-        return variance / (array.Count);
-    }
-
 }
