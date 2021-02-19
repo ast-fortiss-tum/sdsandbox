@@ -54,9 +54,11 @@ public class StatsDisplayer : MonoBehaviour
     private Text xteLabel;
     private Text xteMaxLabel;
     private Text steerVarLabel;
+    private Text currWaypointLabel;
 
     // Path manager for XTE
-    private PathManager pm;
+    private static PathManager pm;
+    private static int currentWaypoint = 0;
 
     // Car
     private static double epsilon = 0.01;
@@ -120,6 +122,7 @@ public class StatsDisplayer : MonoBehaviour
                 prevTimeLabel = labels[4];
                 xteMaxLabel = labels[5];
                 steerVarLabel = labels[6];
+                currWaypointLabel = labels[7];
             }
         }
 
@@ -242,8 +245,19 @@ public class StatsDisplayer : MonoBehaviour
         lapSteers.Add(Math.Abs(car.GetSteering()));
         lapSpeeds.Add(Math.Abs(car.GetVelocity().magnitude));
 
+
         if (pm != null)
         {
+            // Updating current way point
+            if (pm.path.iActiveSpan + 1 > currentWaypoint)
+                currentWaypoint = pm.path.iActiveSpan + 1;
+
+            // Checking if lap finished
+            if (pm.path.iActiveSpan == 1 && currentWaypoint >= pm.path.nodes.Count - 2)
+            {
+                endOfLapUpdates();
+            }
+
             // Updating XTE
             if (!pm.path.GetCrossTrackErr(car.GetTransform(), ref xte))
             {
@@ -290,6 +304,9 @@ public class StatsDisplayer : MonoBehaviour
 
     public static void endOfLapUpdates()
     {
+        // Updating current waypoint
+        currentWaypoint = pm.path.iActiveSpan + 1;
+
         // Counting lap
         lap += 1;
 
@@ -346,5 +363,6 @@ public class StatsDisplayer : MonoBehaviour
         xteLabel.text = xteLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + xte;
         xteMaxLabel.text = xteMaxLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + maxXte;
         steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + lastLapSteerVar;
+        currWaypointLabel.text = currWaypointLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + (currentWaypoint) + "/" + (pm.path.nodes.Count - 1);
     }
 }
