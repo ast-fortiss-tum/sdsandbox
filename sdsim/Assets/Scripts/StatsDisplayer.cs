@@ -15,6 +15,7 @@ public class StatsDisplayer : MonoBehaviour
 
     // Log informations / histories per Lap
     public static bool writeLog = true;
+    private string frameLogPath;
     public static List<float> timesHistory;
     public static List<float> offTrackHistory;
     public static List<float> xteAvgHistory;
@@ -97,6 +98,10 @@ public class StatsDisplayer : MonoBehaviour
             speedAvgHistory = new List<float>();
             speedVarHistory = new List<float>();
             crashesHistory = new List<int>();
+
+            string filename = "Frames - " + getFileName();
+            frameLogPath = Application.dataPath + "/Testing/" + filename + ".csv";
+            System.IO.File.AppendAllLines(frameLogPath, new string[] { "Lap;XTE;Steering;Throttle;"});
         }
 
         // Initializing PM
@@ -149,6 +154,11 @@ public class StatsDisplayer : MonoBehaviour
             getUpdatedStats();
             displayStats();
         }
+
+        if (writeLog && carStarted)
+        {
+            writeFrameStats();
+        }
     }
 
     private void OnDestroy()
@@ -168,9 +178,8 @@ public class StatsDisplayer : MonoBehaviour
                 minute = "0" + minute;
             }
 
-            string filename = scriptStartTime.Year + "-"+ scriptStartTime.Month + "-" + scriptStartTime.Day + "-" + hour +"h_" + minute+"m";
-
-            // MacOS
+            // Writing laps (MacOS)
+            string filename = "Laps - " + getFileName();
             string filepath = Application.dataPath + "/Testing/" + filename + ".csv";
 
             string text = "Lap time; Off-track; Max XTE; XTE avg; XTE var; Steer avg; Steer var; Speed avg; Speed var; Crashes;\n";
@@ -364,5 +373,29 @@ public class StatsDisplayer : MonoBehaviour
         xteMaxLabel.text = xteMaxLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + maxXte;
         steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + lastLapSteerVar;
         currWaypointLabel.text = currWaypointLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + (currentWaypoint) + "/" + (pm.path.nodes.Count - 1);
+    }
+
+    private void writeFrameStats()
+    {
+        string frameStats = lap + ";" + xte + ";" + car.GetSteering() + ";" + car.GetThrottle();
+        System.IO.File.AppendAllLines(frameLogPath, new string[] { frameStats });
+    }
+
+    private string getFileName()
+    {
+        string hour = "" + scriptStartTime.Hour;
+        string minute = "" + scriptStartTime.Minute;
+
+        if (scriptStartTime.Hour < 10)
+        {
+            hour = "0" + hour;
+        }
+
+        if (scriptStartTime.Minute < 10)
+        {
+            minute = "0" + minute;
+        }
+
+        return scriptStartTime.Year + "-" + scriptStartTime.Month + "-" + scriptStartTime.Day + "-" + hour + "h_" + minute + "m";
     }
 }
