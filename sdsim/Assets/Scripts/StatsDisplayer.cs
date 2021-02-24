@@ -182,7 +182,7 @@ public class StatsDisplayer : MonoBehaviour
             string filename = "Laps - " + getFileName();
             string filepath = Application.dataPath + "/Testing/" + filename + ".csv";
 
-            string text = "Lap time; Off-track; Max XTE; XTE avg; XTE var; Steer avg; Steer var; Speed avg; Speed var; Crashes;\n";
+            string text = "Lap time;Off-track;Max XTE;XTE avg;XTE var;Steer avg;Steer var;Speed avg;Speed var;Crashes;\n";
             for(int i = 0; i<timesHistory.Count; i++)
             {
                 float t = timesHistory[i];
