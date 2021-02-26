@@ -101,7 +101,7 @@ public class StatsDisplayer : MonoBehaviour
 
             string filename = "Frames - " + getFileName();
             frameLogPath = Application.dataPath + "/Testing/" + filename + ".csv";
-            System.IO.File.AppendAllLines(frameLogPath, new string[] { "Lap;XTE;Steering;Throttle;"});
+            System.IO.File.AppendAllLines(frameLogPath, new string[] { "Lap;XTE;Steering;Throttle;Velocity;Acceleration"});
         }
 
         // Initializing PM
@@ -377,7 +377,7 @@ public class StatsDisplayer : MonoBehaviour
 
     private void writeFrameStats()
     {
-        string frameStats = lap + ";" + xte + ";" + car.GetSteering() + ";" + car.GetThrottle();
+        string frameStats = lap + ";" + xte + ";" + car.GetSteering() + ";" + car.GetThrottle() + ";" + car.GetVelocity().magnitude + ";" + car.GetAccel().magnitude;
         System.IO.File.AppendAllLines(frameLogPath, new string[] { frameStats });
     }
 
