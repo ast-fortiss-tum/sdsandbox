@@ -623,9 +623,11 @@ MonoBehaviour:
     m_Options:
     - m_Text: 320x240
       m_Image: {fileID: 0}
-    - m_Text: 160x120
-      m_Image: {fileID: 0}
     - m_Text: 200x110
+      m_Image: {fileID: 0}
+    - m_Text: 320x200
+      m_Image: {fileID: 0}
+    - m_Text: 160x120
       m_Image: {fileID: 0}
     - m_Text: 224x224
       m_Image: {fileID: 0}
