@@ -75,7 +75,8 @@ public class Logger : MonoBehaviour {
 	//should we log when we are enabled
 	public bool bDoLog = true;
 
-    public int limitFPS = 30;
+    // sampling how many frames per seconds are saved
+    public int limitFPS = 5;
 
     float timeSinceLastCapture = 0.0f;
 
@@ -83,13 +84,13 @@ public class Logger : MonoBehaviour {
     public bool SharkStyle = false;
 
 	//We can output our logs in the style that matched the output from the udacity simulator
-	public bool UdacityStyle = false;
+	public bool UdacityStyle = true;
 
     //We can output our logs in the style that matched the output from the donkey robot car platform - donkeycar.com
     public bool DonkeyStyle = false;
 
     //Tub style as prefered by Donkey2
-    public bool DonkeyStyle2 = true;
+    public bool DonkeyStyle2 = false;
 
     public Text logDisplay;
 
@@ -113,18 +114,25 @@ public class Logger : MonoBehaviour {
         return Application.dataPath + "/../log/";
     }
 
-	void Awake()
+    void Awake()
 	{
-		car = carObj.GetComponent<ICar>();
+
+        SharkStyle = false;
+        DonkeyStyle = false;
+        DonkeyStyle2 = false;
+        UdacityStyle = true;
+
+        car = carObj.GetComponent<ICar>();
 
 		if(bDoLog && car != null)
 		{
 			if(UdacityStyle)
 			{
 				outputFilename = "driving_log.csv";
-			}
+                var file = Directory.CreateDirectory(GetLogPath() +  "IMG/"); // returns a DirectoryInfo object
+            }
 
-			string filename = GetLogPath() + outputFilename;
+            string filename = GetLogPath() + outputFilename;
 
 			writer = new StreamWriter(filename);
 
@@ -132,7 +140,7 @@ public class Logger : MonoBehaviour {
 
 			if(UdacityStyle)
 			{
-				writer.WriteLine("center,left,right,steering,throttle,brake,speed");
+				writer.WriteLine("center,steering,throttle,speed,cte");
 			}
 
             if(DonkeyStyle2)
@@ -177,13 +185,17 @@ public class Logger : MonoBehaviour {
 		if(writer != null)
 		{
 			if(UdacityStyle)
-			{
-				string image_filename = GetUdacityStyleImageFilename();
+            { 
+                string image_filename = GetUdacityStyleImageFilename();
 				float steering = car.GetSteering() / car.GetMaxSteering();
-				writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", image_filename, 
-                    "none", "none", steering.ToString(), 
-                    car.GetThrottle().ToString(), "0", "0", lapCounter));
-			}
+                writer.WriteLine(string.Format("{0},{1},{2},{3},{4}",
+                    image_filename, // center
+                    steering.ToString(), // steering
+                    car.GetThrottle().ToString(), // throttle
+                    //car.GetFootBrake(), // brake, not working, prob not implemented yet
+                    car.GetVelocity().magnitude, // speed
+                    StatsDisplayer.xte)); // cte
+            }
             else if(DonkeyStyle || SharkStyle)
             {
 
