@@ -84,13 +84,13 @@ public class Logger : MonoBehaviour {
     public bool SharkStyle = false;
 
 	//We can output our logs in the style that matched the output from the udacity simulator
-	public bool UdacityStyle = true;
+	public bool UdacityStyle = false;
 
     //We can output our logs in the style that matched the output from the donkey robot car platform - donkeycar.com
     public bool DonkeyStyle = false;
 
     //Tub style as prefered by Donkey2
-    public bool DonkeyStyle2 = false;
+    public bool DonkeyStyle2 = true;
 
     public Text logDisplay;
 
