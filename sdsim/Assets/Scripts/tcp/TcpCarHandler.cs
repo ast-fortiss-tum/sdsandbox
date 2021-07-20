@@ -44,6 +44,7 @@ namespace tk
 
         void Awake()
         {
+            Application.targetFrameRate = (int)limitFPS;
             car = carObj.GetComponent<ICar>();
             pm = GameObject.FindObjectOfType<PathManager>();
 

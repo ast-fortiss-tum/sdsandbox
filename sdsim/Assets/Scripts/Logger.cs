@@ -49,7 +49,6 @@ public class DonkeyRecord
         json = json.Replace("user_angle", "user/angle");
         json = json.Replace("user_mode", "user/mode");
         json = json.Replace("track_lap", "track/lap");
-        json = json.Replace("track_lap", "track/lap");
         json = json.Replace("track_loc", "track/loc");
 
         return json;
@@ -76,7 +75,7 @@ public class Logger : MonoBehaviour {
 	public bool bDoLog = true;
 
     // sampling how many frames per seconds are saved
-    public int limitFPS = 5;
+    public int limitFPS = 21;
 
     float timeSinceLastCapture = 0.0f;
 
@@ -84,13 +83,13 @@ public class Logger : MonoBehaviour {
     public bool SharkStyle = false;
 
 	//We can output our logs in the style that matched the output from the udacity simulator
-	public bool UdacityStyle = false;
+	public bool UdacityStyle = true;
 
     //We can output our logs in the style that matched the output from the donkey robot car platform - donkeycar.com
     public bool DonkeyStyle = false;
 
     //Tub style as prefered by Donkey2
-    public bool DonkeyStyle2 = true;
+    public bool DonkeyStyle2 = false;
 
     public Text logDisplay;
 
@@ -140,7 +139,7 @@ public class Logger : MonoBehaviour {
 
 			if(UdacityStyle)
 			{
-				writer.WriteLine("center,steering,throttle,speed,cte");
+				writer.WriteLine("center,steering,throttle,speed (km/h),cte,time");
 			}
 
             if(DonkeyStyle2)
@@ -188,13 +187,14 @@ public class Logger : MonoBehaviour {
             { 
                 string image_filename = GetUdacityStyleImageFilename();
 				float steering = car.GetSteering() / car.GetMaxSteering();
-                writer.WriteLine(string.Format("{0},{1},{2},{3},{4}",
+                writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5}",
                     image_filename, // center
                     steering.ToString(), // steering
                     car.GetThrottle().ToString(), // throttle
                     //car.GetFootBrake(), // brake, not working, prob not implemented yet
-                    car.GetVelocity().magnitude, // speed
-                    StatsDisplayer.xte)); // cte
+                    Math.Round(car.GetVelocity().magnitude * 3.6, 2), // speed (* 3.6 => m/s to km/h)
+                    StatsDisplayer.xte, // cte
+                    StatsDisplayer.lapTime)); // simulation time so far
             }
             else if(DonkeyStyle || SharkStyle)
             {
@@ -252,7 +252,7 @@ public class Logger : MonoBehaviour {
         if (maxFramesToLog != -1 && frameCounter >= maxFramesToLog)
         {
             Shutdown();
-            this.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         frameCounter = frameCounter + 1;

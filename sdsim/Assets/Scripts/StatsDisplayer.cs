@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -17,25 +16,31 @@ public class StatsDisplayer : MonoBehaviour
     public static bool writeLog = true;
     private string frameLogPath;
     public static List<float> timesHistory;
+
     public static List<float> offTrackHistory;
+    public static List<int> crashesHistory;
+
     public static List<float> xteAvgHistory;
     public static List<float> xteVarHistory;
     public static List<float> maxXteHistory;
+
     public static List<float> steersAvgHistory;
     public static List<float> steersVarsHistory;
+
     public static List<float> speedAvgHistory;
     public static List<float> speedVarHistory;
-    public static List<int> crashesHistory;
 
     // Displayable Stats
     public static int lap = 1;
     public static int lapCrashes = 0;
     public static float lapTime;
     public static float prevLapTime;
-    public static int offTrackCounter;
+    public static int offTrackEpisodeCounter;
     public static float xte;
     public static float maxXte;
     public static float lastLapSteerVar;
+    public static float curSpeed; // new
+    public static float avgSpeed; // new
 
     // Lap frames
     public static List<float> lapXtes;
@@ -43,7 +48,7 @@ public class StatsDisplayer : MonoBehaviour
     public static List<float> lapSpeeds;
 
     // Parameters
-    public float offTrackXTE; // 1.4
+    public float offTrackXTEThreshold; // 1.4
     private bool isOffTrack = false;
     public static float startTime;
 
@@ -54,8 +59,10 @@ public class StatsDisplayer : MonoBehaviour
     private Text outOfTrackLabel;
     private Text xteLabel;
     private Text xteMaxLabel;
-    private Text steerVarLabel;
     private Text currWaypointLabel;
+    private Text currSpeedLabel; // new
+    private Text avgSpeedLabel; // new
+    private Text avgXteLabel; // new
 
     // Path manager for XTE
     private static PathManager pm;
@@ -67,19 +74,24 @@ public class StatsDisplayer : MonoBehaviour
     public GameObject carObj;
     private Car car;
 
+    public int frameId;
+
     // Start is called before the first frame update
     void Start()
     {
         // Updating script start time
         scriptStartTime = DateTime.Now;
+        frameId = 0;
 
         // Initializing stats
         lapTime = 0;
         prevLapTime = 0;
-        offTrackCounter = 0;
+        offTrackEpisodeCounter = 0;
         xte = 0;
         maxXte = 0;
         lastLapSteerVar = 0;
+        curSpeed = 0; // new
+        avgSpeed = 0; // new
 
         lapXtes = new List<float>();
         lapSteers = new List<float>();
@@ -90,18 +102,21 @@ public class StatsDisplayer : MonoBehaviour
         {
             timesHistory = new List<float>();
             offTrackHistory = new List<float>();
+            crashesHistory = new List<int>();
+
             xteAvgHistory = new List<float>();
             xteVarHistory = new List<float>();
             maxXteHistory = new List<float>();
+
             steersAvgHistory = new List<float>();
             steersVarsHistory = new List<float>();
+
             speedAvgHistory = new List<float>();
             speedVarHistory = new List<float>();
-            crashesHistory = new List<int>();
 
-            string filename = "Frames - " + getFileName();
+            string filename = "Simulation-" + getFileName();
             frameLogPath = Application.dataPath + "/Testing/" + filename + ".csv";
-            System.IO.File.AppendAllLines(frameLogPath, new string[] { "Lap;XTE;Steering;Throttle;Velocity;Acceleration"});
+            System.IO.File.AppendAllLines(frameLogPath, new string[] { "frameId,lap,xte,steering,throttle,speed,acceleration" });
         }
 
         // Initializing PM
@@ -118,16 +133,18 @@ public class StatsDisplayer : MonoBehaviour
         {
             Text[] labels = statsPanel.GetComponentsInChildren<Text>();
 
-            if (labels.Length >= 7)
+            if (labels.Length >= 10)
             {
                 lapLabel = labels[0];
                 timeLabel = labels[1];
                 outOfTrackLabel = labels[2];
-                xteLabel = labels[3];
-                prevTimeLabel = labels[4];
-                xteMaxLabel = labels[5];
-                steerVarLabel = labels[6];
-                currWaypointLabel = labels[7];
+                prevTimeLabel = labels[3];
+                currSpeedLabel = labels[4];
+                avgSpeedLabel = labels[5];
+                xteLabel = labels[6];
+                avgXteLabel = labels[7];
+                xteMaxLabel = labels[8];
+                currWaypointLabel = labels[9];
             }
         }
 
@@ -157,7 +174,7 @@ public class StatsDisplayer : MonoBehaviour
 
         if (writeLog && carStarted)
         {
-            writeFrameStats();
+            writePerFrameStats();
         }
     }
 
@@ -182,7 +199,7 @@ public class StatsDisplayer : MonoBehaviour
             string filename = "Laps - " + getFileName();
             string filepath = Application.dataPath + "/Testing/" + filename + ".csv";
 
-            string text = "Lap time;Off-track;Max XTE;XTE avg;XTE var;Steer avg;Steer var;Speed avg;Speed var;Crashes;\n";
+            string text = "Lap time,OBE,Max XTE,XTE avg,XTE var,Steer avg,Steer var,Speed avg,Speed var,Crashes\n";
             for(int i = 0; i<timesHistory.Count; i++)
             {
                 float t = timesHistory[i];
@@ -196,7 +213,7 @@ public class StatsDisplayer : MonoBehaviour
                 float spv = speedVarHistory[i];
                 float c = crashesHistory[i];
 
-                text += t + ";" + o + ";" + m + ";" + xa + ";" + xv + ";" + sta + ";" + stv + ";" + spa + ";" + spv + ";" + c +";\n";
+                text += t + "," + o + "," + m + "," + xa + "," + xv + "," + sta + "," + stv + "," + spa + "," + spv + "," + c +"\n";
             }
 
             System.IO.File.WriteAllText(filepath, text);
@@ -248,12 +265,13 @@ public class StatsDisplayer : MonoBehaviour
         }
 
         // Updating time
-        lapTime = Time.time - startTime;
+        lapTime = (float)Math.Round(Time.time - startTime, 2);
 
         // Updating frame infos
         lapSteers.Add(Math.Abs(car.GetSteering()));
-        lapSpeeds.Add(Math.Abs(car.GetVelocity().magnitude));
-
+        lapSpeeds.Add((float)Math.Round(car.GetVelocity().magnitude * 3.6, 2)); // km/h
+        curSpeed = (float)Math.Round(car.GetVelocity().magnitude * 3.6, 2); // km/h
+        avgSpeed = Utilities.getMean(lapSpeeds);
 
         if (pm != null)
         {
@@ -290,11 +308,11 @@ public class StatsDisplayer : MonoBehaviour
             lapXtes.Add(Math.Abs(xte));
 
             // Updating Out-of-track counter
-            if (Math.Abs(xte) > Math.Abs(offTrackXTE))
+            if (Math.Abs(xte) > Math.Abs(offTrackXTEThreshold))
             {
                 if (!isOffTrack)
                 {
-                    offTrackCounter += 1;
+                    offTrackEpisodeCounter += 1;
                     isOffTrack = true;
                 }
             }
@@ -321,7 +339,7 @@ public class StatsDisplayer : MonoBehaviour
 
         // Updating prev. lap time and current starting time
         float finishTime = Time.time;
-        prevLapTime = finishTime - startTime;
+        prevLapTime = (float)Math.Round(finishTime - startTime, 2);
         startTime = finishTime;
 
 
@@ -329,10 +347,10 @@ public class StatsDisplayer : MonoBehaviour
         if (writeLog)
         {
             timesHistory.Add(prevLapTime);
-            offTrackHistory.Add(offTrackCounter);
+            offTrackHistory.Add(offTrackEpisodeCounter);
 
             // XTE
-            float lapxteavg = Utilities.getMean(lapXtes);
+            float lapxteavg = (float)Math.Round(Utilities.getMean(lapXtes), 4);
             xteAvgHistory.Add(lapxteavg);
             xteVarHistory.Add(Utilities.getVar(lapXtes, lapxteavg));
             maxXteHistory.Add(maxXte);
@@ -344,7 +362,8 @@ public class StatsDisplayer : MonoBehaviour
             steersVarsHistory.Add(lastLapSteerVar);
 
             // Speed
-            float lapspeedavg = Utilities.getMean(lapSpeeds);
+            float lapspeedavg = (float)Math.Round(Utilities.getMean(lapSpeeds), 2);
+            // avgSpeed = lapspeedavg;
             speedAvgHistory.Add(lapspeedavg);
             speedVarHistory.Add(Utilities.getVar(lapSpeeds, lapspeedavg));
 
@@ -359,7 +378,7 @@ public class StatsDisplayer : MonoBehaviour
 
         // Resetting max XTE and off-track counter for this lap
         maxXte = 0;
-        offTrackCounter = 0;
+        offTrackEpisodeCounter = 0;
         lapCrashes = 0;
     }
 
@@ -367,18 +386,21 @@ public class StatsDisplayer : MonoBehaviour
     {
         lapLabel.text = lapLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + lap;
         timeLabel.text = timeLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + lapTime;
+        outOfTrackLabel.text = outOfTrackLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + offTrackEpisodeCounter;
         prevTimeLabel.text = prevTimeLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + prevLapTime;
-        outOfTrackLabel.text = outOfTrackLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + offTrackCounter;
+        currSpeedLabel.text = currSpeedLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + curSpeed;
+        avgSpeedLabel.text = avgSpeedLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + Math.Round(avgSpeed, 4);
         xteLabel.text = xteLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + xte;
+        avgXteLabel.text = avgXteLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + Math.Round(Utilities.getMean(lapXtes), 4);
         xteMaxLabel.text = xteMaxLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + maxXte;
-        steerVarLabel.text = steerVarLabel.text.Split(new string[] { ": "}, StringSplitOptions.None)[0] + ": " + lastLapSteerVar;
         currWaypointLabel.text = currWaypointLabel.text.Split(new string[] { ": " }, StringSplitOptions.None)[0] + ": " + (currentWaypoint) + "/" + (pm.path.nodes.Count - 1);
     }
 
-    private void writeFrameStats()
+    private void writePerFrameStats()
     {
-        string frameStats = lap + ";" + xte + ";" + car.GetSteering() + ";" + car.GetThrottle() + ";" + car.GetVelocity().magnitude + ";" + car.GetAccel().magnitude;
+        string frameStats = frameId + "," + lap + "," + xte + "," + car.GetSteering() + "," + car.GetThrottle() + "," + car.GetVelocity().magnitude + "," + car.GetAccel().magnitude;
         System.IO.File.AppendAllLines(frameLogPath, new string[] { frameStats });
+        frameId += 1;
     }
 
     private string getFileName()
@@ -396,6 +418,6 @@ public class StatsDisplayer : MonoBehaviour
             minute = "0" + minute;
         }
 
-        return scriptStartTime.Year + "-" + scriptStartTime.Month + "-" + scriptStartTime.Day + "-" + hour + "h_" + minute + "m";
+        return scriptStartTime.Year + "" + scriptStartTime.Month + "" + scriptStartTime.Day + "-" + hour + "h" + minute + "m";
     }
 }

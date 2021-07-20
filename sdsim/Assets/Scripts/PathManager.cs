@@ -16,7 +16,7 @@ public class PathManager : MonoBehaviour {
 
 	public int numSpans = 100;
 
-	public float turnInc = 1f;
+    public float turnInc = 1f;
 
 	public bool sameRandomPath = true;
 

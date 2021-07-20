@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class PathNode
 {
@@ -143,7 +144,7 @@ public class CarPath
 		if (cp.y > 0.0f)
 			sign = -1f;
 
-		err = errVec.magnitude * sign;
+		err = (float)Math.Round(errVec.magnitude * sign, 4);
 		return true;
 	}
 }
