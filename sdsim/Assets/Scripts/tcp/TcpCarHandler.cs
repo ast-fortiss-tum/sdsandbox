@@ -19,7 +19,7 @@ namespace tk
         private tk.JsonTcpClient client;
         public Text ai_text;
 
-        public float limitFPS = 20.0f;
+        public float limitFPS = 21.0f;
         float timeSinceLastCapture = 0.0f;
 
         float steer_to_angle = 16.0f;
@@ -44,7 +44,9 @@ namespace tk
 
         void Awake()
         {
+            QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = (int)limitFPS;
+
             car = carObj.GetComponent<ICar>();
             pm = GameObject.FindObjectOfType<PathManager>();
 

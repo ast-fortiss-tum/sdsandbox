@@ -83,10 +83,10 @@ public class Logger : MonoBehaviour {
     public bool SharkStyle = false;
 
 	//We can output our logs in the style that matched the output from the udacity simulator
-	public bool UdacityStyle = true;
+	public bool UdacityStyle = false;
 
     //We can output our logs in the style that matched the output from the donkey robot car platform - donkeycar.com
-    public bool DonkeyStyle = false;
+    public bool DonkeyStyle = true;
 
     //Tub style as prefered by Donkey2
     public bool DonkeyStyle2 = false;
@@ -118,8 +118,8 @@ public class Logger : MonoBehaviour {
 
         SharkStyle = false;
         DonkeyStyle = false;
-        DonkeyStyle2 = false;
-        UdacityStyle = true;
+        DonkeyStyle2 = true;
+        UdacityStyle = false;
 
         car = carObj.GetComponent<ICar>();
 
