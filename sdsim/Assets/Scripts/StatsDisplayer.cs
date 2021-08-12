@@ -116,7 +116,7 @@ public class StatsDisplayer : MonoBehaviour
 
             string filename = "Simulation-" + getFileName();
             frameLogPath = Application.dataPath + "/Testing/" + filename + ".csv";
-            System.IO.File.AppendAllLines(frameLogPath, new string[] { "frameId,lap,xte,steering,throttle,speed,acceleration" });
+            System.IO.File.AppendAllLines(frameLogPath, new string[] { "frameId,lap,xte,steering,throttle,speed,acceleration,x,y" });
         }
 
         // Initializing PM
@@ -199,7 +199,7 @@ public class StatsDisplayer : MonoBehaviour
             string filename = "Laps - " + getFileName();
             string filepath = Application.dataPath + "/Testing/" + filename + ".csv";
 
-            string text = "Lap time,OBE,Max XTE,XTE avg,XTE var,Steer avg,Steer var,Speed avg,Speed var,Crashes\n";
+            string text = "Lap time,OBE,Max XTE,XTE avg,XTE var,Steer avg,Steer var,Speed avg,Speed var,Off track\n";
             for(int i = 0; i<timesHistory.Count; i++)
             {
                 float t = timesHistory[i];
@@ -211,7 +211,7 @@ public class StatsDisplayer : MonoBehaviour
                 float stv = steersVarsHistory[i];
                 float spa = speedAvgHistory[i];
                 float spv = speedVarHistory[i];
-                float c = crashesHistory[i];
+                float c = offTrackHistory[i];
 
                 text += t + "," + o + "," + m + "," + xa + "," + xv + "," + sta + "," + stv + "," + spa + "," + spv + "," + c +"\n";
             }
@@ -369,6 +369,7 @@ public class StatsDisplayer : MonoBehaviour
 
             // Crashes
             crashesHistory.Add(lapCrashes);
+            offTrackHistory.Add(offTrackEpisodeCounter);
         }
 
         // Clear lap frames
@@ -398,7 +399,7 @@ public class StatsDisplayer : MonoBehaviour
 
     private void writePerFrameStats()
     {
-        string frameStats = frameId + "," + lap + "," + xte + "," + car.GetSteering() + "," + car.GetThrottle() + "," + car.GetVelocity().magnitude + "," + car.GetAccel().magnitude;
+        string frameStats = frameId + "," + lap + "," + xte + "," + car.GetSteering() + "," + car.GetThrottle() + "," + car.GetVelocity().magnitude + "," + car.GetAccel().magnitude + "," + car.transform.position.x + "," + car.transform.position.z ;
         System.IO.File.AppendAllLines(frameLogPath, new string[] { frameStats });
         frameId += 1;
     }
