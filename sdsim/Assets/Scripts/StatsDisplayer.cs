@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,8 +31,8 @@ public class StatsDisplayer : MonoBehaviour
     public static List<float> speedVarHistory;
 
     // Displayable Stats
-    public static int lap = 1;
-    public static int lapCrashes = 0;
+    public static int lap;
+    public static int lapCrashes;
     public static float lapTime;
     public static float prevLapTime;
     public static int offTrackEpisodeCounter;
@@ -48,7 +48,7 @@ public class StatsDisplayer : MonoBehaviour
     public static List<float> lapSpeeds;
 
     // Parameters
-    public float offTrackXTEThreshold; // 1.4
+    public float offTrackXTEThreshold; // 2.0
     private bool isOffTrack = false;
     public static float startTime;
 
@@ -66,7 +66,7 @@ public class StatsDisplayer : MonoBehaviour
 
     // Path manager for XTE
     private static PathManager pm;
-    private static int currentWaypoint = 0;
+    private static int currentWaypoint;
 
     // Car
     private static double epsilon = 0.01;
@@ -76,9 +76,29 @@ public class StatsDisplayer : MonoBehaviour
 
     public int frameId;
 
+    public int limitFPS;
+
+    float timeSinceLastCapture;
+
     // Start is called before the first frame update
     void Start()
     {
+
+        limitFPS = 21;
+        timeSinceLastCapture = 0.0f;
+
+        InitializeStats(true);
+
+        carStarted = checkCarStarted();
+    }
+
+    private void InitializeStats(bool createFile)
+    {
+        currentWaypoint = 0;
+        lap = 1;
+        lapCrashes = 0;
+        offTrackXTEThreshold = 2.0f;
+
         // Updating script start time
         scriptStartTime = DateTime.Now;
         frameId = 0;
@@ -114,7 +134,15 @@ public class StatsDisplayer : MonoBehaviour
             speedAvgHistory = new List<float>();
             speedVarHistory = new List<float>();
 
-            string filename = "Simulation-" + getFileName();
+            string filename = "Simulation-" + generateFilenameFromTimestamp();
+
+            //check if directory doesn't exit
+            if (!Directory.Exists(Application.dataPath + "/Testing/"))
+            {
+                //if it doesn't, create it
+                Directory.CreateDirectory(Application.dataPath + "/Testing/");
+            }
+
             frameLogPath = Application.dataPath + "/Testing/" + filename + ".csv";
             System.IO.File.AppendAllLines(frameLogPath, new string[] { "frameId,lap,xte,steering,throttle,speed,acceleration,x,y" });
         }
@@ -136,19 +164,17 @@ public class StatsDisplayer : MonoBehaviour
             if (labels.Length >= 10)
             {
                 lapLabel = labels[0];
-                timeLabel = labels[1];
-                outOfTrackLabel = labels[2];
-                prevTimeLabel = labels[3];
-                currSpeedLabel = labels[4];
-                avgSpeedLabel = labels[5];
-                xteLabel = labels[6];
-                avgXteLabel = labels[7];
-                xteMaxLabel = labels[8];
-                currWaypointLabel = labels[9];
+                currWaypointLabel = labels[1];
+                timeLabel = labels[2];
+                outOfTrackLabel = labels[3];
+                prevTimeLabel = labels[4];
+                currSpeedLabel = labels[5];
+                avgSpeedLabel = labels[6];
+                xteLabel = labels[7];
+                avgXteLabel = labels[8];
+                xteMaxLabel = labels[9];
             }
         }
-
-        carStarted = checkCarStarted();
     }
 
     // Update is called once per frame
@@ -174,6 +200,14 @@ public class StatsDisplayer : MonoBehaviour
 
         if (writeLog && carStarted)
         {
+            // writes at a frame rate of 21
+            timeSinceLastCapture += Time.deltaTime;
+
+            if (timeSinceLastCapture < 1.0f / limitFPS)
+                return;
+
+            timeSinceLastCapture -= (1.0f / limitFPS);
+
             writePerFrameStats();
         }
     }
@@ -196,14 +230,13 @@ public class StatsDisplayer : MonoBehaviour
             }
 
             // Writing laps (MacOS)
-            string filename = "Laps - " + getFileName();
+            string filename = "Laps - " + scriptStartTime.Year + "" + scriptStartTime.Month + "" + scriptStartTime.Day + "-" + hour + "h" + minute + "m";
             string filepath = Application.dataPath + "/Testing/" + filename + ".csv";
 
-            string text = "Lap time,OBE,Max XTE,XTE avg,XTE var,Steer avg,Steer var,Speed avg,Speed var,Off track\n";
-            for(int i = 0; i<timesHistory.Count; i++)
+            string text = "Lap time,Max XTE,XTE avg,XTE var,Steer avg,Steer var,Speed avg,Speed var,Off track\n";
+            for(int i = 0; i < timesHistory.Count; i++)
             {
                 float t = timesHistory[i];
-                float o = offTrackHistory[i];
                 float m = maxXteHistory[i];
                 float xa = xteAvgHistory[i];
                 float xv = xteVarHistory[i];
@@ -213,12 +246,15 @@ public class StatsDisplayer : MonoBehaviour
                 float spv = speedVarHistory[i];
                 float c = offTrackHistory[i];
 
-                text += t + "," + o + "," + m + "," + xa + "," + xv + "," + sta + "," + stv + "," + spa + "," + spv + "," + c +"\n";
+                text += t + "," + m + "," + xa + "," + xv + "," + sta + "," + stv + "," + spa + "," + spv + "," + c +"\n";
             }
 
-            System.IO.File.WriteAllText(filepath, text);
+            File.WriteAllText(filepath, text);
             Debug.Log("Log file written to " + filepath);
         }
+
+        carStarted = false;
+        InitializeStats(false);
     }
 
     private bool checkCarStarted()
@@ -347,25 +383,24 @@ public class StatsDisplayer : MonoBehaviour
         if (writeLog)
         {
             timesHistory.Add(prevLapTime);
-            offTrackHistory.Add(offTrackEpisodeCounter);
 
             // XTE
             float lapxteavg = (float)Math.Round(Utilities.getMean(lapXtes), 4);
-            xteAvgHistory.Add(lapxteavg);
-            xteVarHistory.Add(Utilities.getVar(lapXtes, lapxteavg));
-            maxXteHistory.Add(maxXte);
+            xteAvgHistory.Add((float)Math.Round(lapxteavg, 4));
+            xteVarHistory.Add((float)Math.Round(Utilities.getVar(lapXtes, lapxteavg), 4));
+            maxXteHistory.Add((float)Math.Round(maxXte, 4));
 
             // Steer
             float lapsteeravg = Utilities.getMean(lapSteers);
-            steersAvgHistory.Add(lapsteeravg);
+            steersAvgHistory.Add((float)Math.Round(lapsteeravg, 4));
             lastLapSteerVar = Utilities.getVar(lapSteers, lapsteeravg);
-            steersVarsHistory.Add(lastLapSteerVar);
+            steersVarsHistory.Add((float)Math.Round(lastLapSteerVar, 4));
 
             // Speed
             float lapspeedavg = (float)Math.Round(Utilities.getMean(lapSpeeds), 2);
             // avgSpeed = lapspeedavg;
             speedAvgHistory.Add(lapspeedavg);
-            speedVarHistory.Add(Utilities.getVar(lapSpeeds, lapspeedavg));
+            speedVarHistory.Add((float)Math.Round(Utilities.getVar(lapSpeeds, lapspeedavg), 2));
 
             // Crashes
             crashesHistory.Add(lapCrashes);
@@ -400,14 +435,15 @@ public class StatsDisplayer : MonoBehaviour
     private void writePerFrameStats()
     {
         string frameStats = frameId + "," + lap + "," + xte + "," + car.GetSteering() + "," + car.GetThrottle() + "," + car.GetVelocity().magnitude + "," + car.GetAccel().magnitude + "," + car.transform.position.x + "," + car.transform.position.z ;
-        System.IO.File.AppendAllLines(frameLogPath, new string[] { frameStats });
+        File.AppendAllLines(frameLogPath, new string[] { frameStats });
         frameId += 1;
     }
 
-    private string getFileName()
+    private string generateFilenameFromTimestamp()
     {
         string hour = "" + scriptStartTime.Hour;
         string minute = "" + scriptStartTime.Minute;
+        string second = "" + scriptStartTime.Second;
 
         if (scriptStartTime.Hour < 10)
         {
@@ -419,6 +455,11 @@ public class StatsDisplayer : MonoBehaviour
             minute = "0" + minute;
         }
 
-        return scriptStartTime.Year + "" + scriptStartTime.Month + "" + scriptStartTime.Day + "-" + hour + "h" + minute + "m";
+        if (scriptStartTime.Second < 10)
+        {
+            second = "0" + second;
+        }
+
+        return scriptStartTime.Year + "" + scriptStartTime.Month + "" + scriptStartTime.Day + "-" + hour + "h" + minute + "m" + second + "s";
     }
 }
