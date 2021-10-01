@@ -44,8 +44,8 @@ namespace tk
 
         void Awake()
         {
-            QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = (int)limitFPS;
+            // QualitySettings.vSyncCount = 0;
+            // Application.targetFrameRate = (int)limitFPS;
 
             car = carObj.GetComponent<ICar>();
             pm = GameObject.FindObjectOfType<PathManager>();
