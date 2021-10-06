@@ -22,8 +22,8 @@ public class MenuHandler : MonoBehaviour {
         Application.runInBackground = true;
 
         //Set desired frame rate the same as the Donkey car (~21 fps)
-        //QualitySettings.vSyncCount = 0;
-        //Application.targetFrameRate = 21;
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 21;
 
         //auto link
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
