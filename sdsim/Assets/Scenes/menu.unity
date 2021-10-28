@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 59808421}
   - component: {fileID: 59808420}
   m_Layer: 5
-  m_Name: Button - Generated Track
+  m_Name: Button - FUSI Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -393,7 +393,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: afe776aeb50185a4ba2e823fc7d9a359, type: 3}
+  m_Texture: {fileID: 2800000, guid: 9493f4c5b43c64f268a9573c68f6d6ac, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1024,7 +1024,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: ac445defc7bb96243b78995bdc227bc0, type: 3}
+  m_Texture: {fileID: 2800000, guid: 71b6df4eb63da4aeaadac7cd0d9a6003, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1313,7 +1313,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Generated Road
+  m_Text: Formula USI - Train
 --- !u!222 &780326233
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1537,7 +1537,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Generated Track
+  m_Text: Formula USI - Test
 --- !u!222 &922781287
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2175,6 +2175,76 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1315301933
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1315301934}
+  - component: {fileID: 1315301936}
+  - component: {fileID: 1315301935}
+  m_Layer: 5
+  m_Name: Logo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1315301934
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315301933}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1417614457}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.1147343, y: 0.07012195}
+  m_AnchorMax: {x: 0.8852657, y: 0.92987806}
+  m_AnchoredPosition: {x: 791, y: 1}
+  m_SizeDelta: {x: -1160.8057, y: 120.03113}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1315301935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315301933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 2800000, guid: b41613798819e420fb34f0072673c95d, type: 3}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &1315301936
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315301933}
+  m_CullTransparentMesh: 0
 --- !u!1 &1412604913
 GameObject:
   m_ObjectHideFlags: 0
@@ -2279,6 +2349,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2080155094}
+  - {fileID: 1315301934}
   m_Father: {fileID: 1871358710}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2907,7 +2978,7 @@ GameObject:
   - component: {fileID: 2047057429}
   - component: {fileID: 2047057428}
   m_Layer: 5
-  m_Name: Button - USI Track
+  m_Name: Button - USI Sandbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3169,7 +3240,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Sandbox Version
+  m_Text: Formula USI Simulator
 --- !u!222 &2080155096
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3191,7 +3262,7 @@ GameObject:
   - component: {fileID: 2095103809}
   - component: {fileID: 2095103808}
   m_Layer: 5
-  m_Name: Button - Generated Road
+  m_Name: Button - FUSI Train
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -9,11 +9,11 @@ EditorBuildSettings:
     path: Assets/Scenes/menu.unity
     guid: 1ac0872dcad57c44496bb684aa1998f8
   - enabled: 1
-    path: Assets/Scenes/road_generator.unity
-    guid: 80ac5eef166784810a0ab8e6742f8a30
+    path: Assets/Scenes/fusi_train.unity
+    guid: 6fe6a5a9313d14d1088692e942928962
   - enabled: 1
-    path: Assets/Scenes/small_looping_course.unity
-    guid: b003bdd73179fe046b15d779a91c20e8
+    path: Assets/Scenes/fusi_test.unity
+    guid: 36c156fe44cb246b397e761d1d73431e
   - enabled: 1
     path: Assets/Scenes/sandbox_track.unity
     guid: 4483f94080df5d84f9e98fdae085f167
