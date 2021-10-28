@@ -108,7 +108,7 @@ namespace tk
             json.AddField("steering_angle", car.GetSteering() / steer_to_angle);
             json.AddField("throttle", car.GetThrottle());
             json.AddField("speed", car.GetVelocity().magnitude);
-            json.AddField("image", System.Convert.ToBase64String(camSensor.GetImageBytes()));
+            json.AddField("image", Convert.ToBase64String(camSensor.GetImageBytes()));
 
             json.AddField("hit", car.GetLastCollisionName());
             car.ClearLastCollision();

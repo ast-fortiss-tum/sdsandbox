@@ -462,4 +462,9 @@ public class StatsDisplayer : MonoBehaviour
 
         return scriptStartTime.Year + "" + scriptStartTime.Month + "" + scriptStartTime.Day + "-" + hour + "h" + minute + "m" + second + "s";
     }
+
+    public int getCurrentWaypoint()
+    {
+        return currentWaypoint;
+    }
 }
