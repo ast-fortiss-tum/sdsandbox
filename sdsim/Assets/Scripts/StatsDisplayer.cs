@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading;
+
 
 public class StatsDisplayer : MonoBehaviour
 {
+
     // Flag to see if car started
     public static bool carStarted;
 
@@ -80,6 +83,37 @@ public class StatsDisplayer : MonoBehaviour
 
     float timeSinceLastCapture;
 
+    public int frameCounter = 0;
+
+    string GetLogPath()
+    {
+        if(GlobalState.log_path != "default")
+            return GlobalState.log_path + "/";
+
+        // Debug.Log("Application.dataPath: " + Application.dataPath);
+        return Application.dataPath + "/../log/";
+    }
+
+    void Awake(){
+
+        // string filename = GetLogPath() + outputFilename;
+
+        // MetaJson mjson = new MetaJson();
+        // string[] inputs = {"cam/image_array"}; //, "user/angle", "user/throttle", "user/mode", "track/lap", "track/speed", "track/loc", "track/x", "track/y", "track/z", "track/cte" };
+        // string[] types = {"image_array"}; //, "float", "float", "str", "int", "float", "int", "float", "float", "float", "float" };
+
+        // mjson.Init(inputs, types);
+        // string json = JsonUtility.ToJson(mjson);
+		// var f = File.CreateText(GetLogPath() + "meta.json");
+		// f.Write(json);
+		// f.Close();
+
+        // imagesToSave = new List<ImageSaveJob>();
+
+		// thread = new Thread(SaverThread);
+		// thread.Start();
+	}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -90,6 +124,10 @@ public class StatsDisplayer : MonoBehaviour
         InitializeStats(true);
 
         carStarted = checkCarStarted();
+
+        // GetLogPath();
+
+        // imagesToSave = new List<ImageSaveJob>();
     }
 
     private void InitializeStats(bool createFile)
@@ -136,15 +174,23 @@ public class StatsDisplayer : MonoBehaviour
 
             string filename = "Simulation-" + generateFilenameFromTimestamp();
 
-            //check if directory doesn't exit
+            // check if directory doesn't exit
             if (!Directory.Exists(Application.dataPath + "/Testing/"))
             {
                 //if it doesn't, create it
                 Directory.CreateDirectory(Application.dataPath + "/Testing/");
             }
 
+            // check if directory exits
+            // if (Directory.Exists(Application.dataPath + "/Testing/tub"))
+            // {
+            //     Directory.Delete(Application.dataPath + "/Testing/tub");
+            // }
+
+            // Directory.CreateDirectory(Application.dataPath + "/Testing/tub");
+
             frameLogPath = Application.dataPath + "/Testing/" + filename + ".csv";
-            System.IO.File.AppendAllLines(frameLogPath, new string[] { "frameId,lap,xte,steering,throttle,speed,acceleration,x,y" });
+            System.IO.File.AppendAllLines(frameLogPath, new string[] { "frameId,lap,xte,steering,throttle,speed,acceleration,x,y,isOffTrack" });
         }
 
         // Initializing PM
@@ -177,6 +223,30 @@ public class StatsDisplayer : MonoBehaviour
         }
     }
 
+    // string GetDonkey2StyleImageFilename()
+    // {
+    //     return GetLogPath() + string.Format("{0}_cam-image_array_.jpg", frameCounter);
+    // }
+
+    // // Save the camera sensor to an image. Use the suffix to distinguish between cameras.
+    // void SaveCamSensor(CameraSensor cs, string prefix, string suffix)
+    // {
+    //     if (cs != null)
+    //     {
+    //         Texture2D image = cs.GetImage();
+
+    //         ImageSaveJob ij = new ImageSaveJob();
+			
+    //         ij.filename = GetDonkey2StyleImageFilename();
+    //         ij.bytes = image.EncodeToJPG();
+
+    //         lock (this)
+    //         {
+    //             imagesToSave.Add(ij);
+    //         }
+    //     }
+    // }
+
     // Update is called once per frame
     void Update()
     {
@@ -197,6 +267,8 @@ public class StatsDisplayer : MonoBehaviour
             getUpdatedStats();
             displayStats();
         }
+
+        // SaveCamSensor(camSensor, car.GetActivity(), "");
 
         if (writeLog && carStarted)
         {
@@ -434,7 +506,7 @@ public class StatsDisplayer : MonoBehaviour
 
     private void writePerFrameStats()
     {
-        string frameStats = frameId + "," + lap + "," + xte + "," + car.GetSteering() + "," + car.GetThrottle() + "," + car.GetVelocity().magnitude + "," + car.GetAccel().magnitude + "," + car.transform.position.x + "," + car.transform.position.z ;
+        string frameStats = frameId + "," + lap + "," + xte + "," + car.GetSteering() + "," + car.GetThrottle() + "," + car.GetVelocity().magnitude + "," + car.GetAccel().magnitude + "," + car.transform.position.x + "," + car.transform.position.z  + "," + isOffTrack;
         File.AppendAllLines(frameLogPath, new string[] { frameStats });
         frameId += 1;
     }
@@ -467,4 +539,31 @@ public class StatsDisplayer : MonoBehaviour
     {
         return currentWaypoint;
     }
+
+    // public void SaverThread()
+	// {
+	// 	while(true)
+	// 	{
+	// 		int count = 0;
+
+	// 		lock(this)
+	// 		{
+	// 			count = imagesToSave.Count; 
+	// 		}
+
+	// 		if(count > 0)
+	// 		{
+	// 			ImageSaveJob ij = imagesToSave[0];
+
+    //             //Debug.Log("saving: " + ij.filename);
+
+    //             File.WriteAllBytes(ij.filename, ij.bytes);
+
+	// 			lock(this)
+	// 			{
+	// 				imagesToSave.RemoveAt(0);
+	// 			}
+	// 		}
+	// 	}
+	// }
 }

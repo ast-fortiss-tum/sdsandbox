@@ -31,6 +31,10 @@ public class SandboxServer : MonoBehaviour
             {
                 port = int.Parse(args[i + 1]);
             }
+            // else if (args[i] == "--logDir")
+            // {
+            //     Application.dataPath = Application.dataPath + "/../log/";
+            // }
         }
     }
 

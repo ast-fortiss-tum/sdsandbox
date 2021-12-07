@@ -86,6 +86,9 @@ public class MenuHandler : MonoBehaviour {
 
 	public void OnUseNNNetworkSteering()
 	{
+        if(Logger != null)
+		    Logger.SetActive(true);
+
 		if(carJSControl != null)
 			carJSControl.SetActive(false);
 

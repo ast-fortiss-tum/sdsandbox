@@ -26,36 +26,49 @@ public class DonkeyRecord
     public float user_throttle;
     public float user_angle;
     public string user_mode; 
+
     public int track_lap;
     public float speed;
+    public int loc;
     public float track_x;
+    public float track_y;
     public float track_z;
+    public float track_cte;
+    public bool track_oot;
 
-    public void Init(string image_name, float throttle, float angle, string mode, int lap, float s, float x, float z)
+    public void Init(string image_name, float angle, float throttle, string mode, int lap, float s, int local, float x, float y, float z, float cte, bool isOffTrack)
     {
         cam_image_array = image_name;
-        user_throttle = throttle;
         user_angle = angle;
+        user_throttle = throttle;
         user_mode = mode;
         track_lap = lap;
         speed = s;
+        loc = local;
         track_x = x;
+        track_y = y;
         track_z = z;
+        track_cte = cte;
+        track_oot = isOffTrack;
     }
 
     public string AsString()
     {
         string json = JsonUtility.ToJson(this);
 
-        //Can't name the variable names with a slash, so replace on output
+        // Can't name the variable names with a slash, so replace on output
         json = json.Replace("cam_image", "cam/image");
-        json = json.Replace("user_throttle", "user/throttle");
         json = json.Replace("user_angle", "user/angle");
+        json = json.Replace("user_throttle", "user/throttle");
         json = json.Replace("user_mode", "user/mode");
         json = json.Replace("track_lap", "track/lap");
-        json = json.Replace("speed", "track/speed");
+        json = json.Replace("track_speed", "track/speed");
+        json = json.Replace("track_loc", "track/loc");
         json = json.Replace("track_x", "track/x");
+        json = json.Replace("track_y", "track/y");
         json = json.Replace("track_z", "track/z");
+        json = json.Replace("track_cte", "track/cte");
+        json = json.Replace("track_oot", "track/oot");
 
         return json;
     }
@@ -85,17 +98,11 @@ public class Logger : MonoBehaviour {
 
     float timeSinceLastCapture = 0.0f;
 
-    //We can output our logs in the style that matched the output from the shark robot car platform - github/tawnkramer/shark
-    public bool SharkStyle = false;
-
 	//We can output our logs in the style that matched the output from the udacity simulator
 	public bool UdacityStyle = false;
 
-    //We can output our logs in the style that matched the output from the donkey robot car platform - donkeycar.com
-    public bool DonkeyStyle = true;
-
     //Tub style as prefered by Donkey2
-    public bool DonkeyStyle2 = false;
+    public bool DonkeyStyle2 = true;
 
     public Text logDisplay;
 
@@ -111,6 +118,10 @@ public class Logger : MonoBehaviour {
 
 	Thread thread;
 
+    // Path manager for XTE
+    private static PathManager pm;
+    private static int currentWaypoint;
+
     string GetLogPath()
     {
         if(GlobalState.log_path != "default")
@@ -119,11 +130,16 @@ public class Logger : MonoBehaviour {
         return Application.dataPath + "/../log/";
     }
 
+    // void setLogPath(string path){
+    //     Application.dataPath + "/../log/";
+    // }
+
     void Awake()
 	{
 
-        SharkStyle = false;
-        DonkeyStyle = false;
+        // Initializing PM
+        pm = FindObjectOfType<PathManager>();
+
         DonkeyStyle2 = true;
         UdacityStyle = false;
 
@@ -151,8 +167,10 @@ public class Logger : MonoBehaviour {
             if(DonkeyStyle2)
             {
                 MetaJson mjson = new MetaJson();
-                string[] inputs = {"cam/image_array", "user/angle", "user/throttle", "user/mode", "track/lap", "track/speed", "track/loc", "track/x", "track/z"};
-                string[] types = {"image_array", "float", "float", "str", "int", "float", "int", "float", "float"};
+                string[] inputs = {"cam/image_array", "user/angle", "user/throttle", "user/mode", "track/lap", 
+                                   "track/speed", "track/loc", "track/x", "track/y", "track/z", "track/cte" };
+                string[] types = {"image_array", "float", "float", "str", "int", "float", "int", "float", "float", "float", "float" };
+
                 mjson.Init(inputs, types);
                 string json = JsonUtility.ToJson(mjson);
 				var f = File.CreateText(GetLogPath() + "meta.json");
@@ -171,7 +189,7 @@ public class Logger : MonoBehaviour {
 		thread = new Thread(SaverThread);
 		thread.Start();
 	}
-		
+	
 	// Update is called once per frame
 	void Update () 
 	{
@@ -202,24 +220,42 @@ public class Logger : MonoBehaviour {
                     StatsDisplayer.xte, // cte
                     StatsDisplayer.lapTime)); // simulation time so far
             }
-            else if(DonkeyStyle || SharkStyle)
-            {
-
-            }
             else if(DonkeyStyle2)
             {
                 DonkeyRecord mjson = new DonkeyRecord();
                 float steering = car.GetSteering() / car.GetMaxSteering();
                 float throttle = car.GetThrottle();
-                //int loc = LocationMarker.GetNearestLocMarker(carObj.transform.position);
+                int loc = LocationMarker.GetNearestLocMarker(carObj.transform.position);
 
-                //training code like steering clamped between -1, 1
+                // training code like steering clamped between -1, 1
                 steering = Mathf.Clamp(steering, -1.0f, 1.0f);
 
-                mjson.Init(string.Format("{0}_cam-image_array_.jpg", frameCounter),
-                    throttle, steering, "user", lapCounter,
+                float xte = StatsDisplayer.xte;
+                bool isOffTrack = false;
+
+                // Out-of-track check
+                if (Math.Abs(xte) > Math.Abs(2.0))
+                {
+                   isOffTrack = true;
+                }
+                else
+                {
+                    isOffTrack = false;
+                }
+
+                mjson.Init(
+                    string.Format("{0}_cam-image_array_.jpg", frameCounter),
+                    steering, 
+                    throttle, 
+                    "user", 
+                    lapCounter,
                     car.GetVelocity().magnitude,
-                    car.GetTransform().position.x, car.GetTransform().position.y);
+                    loc,
+                    car.GetTransform().position.x,
+                    car.GetTransform().position.y,
+                    car.GetTransform().position.z,
+                    StatsDisplayer.xte,
+                    isOffTrack);
 
                 string json = mjson.AsString();
                 string filename = string.Format("record_{0}.json", frameCounter);
@@ -229,9 +265,7 @@ public class Logger : MonoBehaviour {
             }
 			else
 			{
-				writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6}", frameCounter.ToString(), activity, car.GetSteering().ToString(), car.GetThrottle().ToString(),
-                     car.GetVelocity().magnitude,
-                    car.GetTransform().position.x, car.GetTransform().position.z));
+				writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6}", frameCounter.ToString(), activity, car.GetSteering().ToString(), car.GetThrottle().ToString(), car.GetVelocity().magnitude, car.GetTransform().position.x, car.GetTransform().position.z));
 			}
 		}
 
@@ -268,28 +302,12 @@ public class Logger : MonoBehaviour {
         frameCounter = frameCounter + 1;
 
         if (logDisplay != null)
-            logDisplay.text = "Log:" + frameCounter;
+            logDisplay.text = "Log: " + frameCounter;
 	}
 
 	string GetUdacityStyleImageFilename()
 	{
 		return GetLogPath() + string.Format("IMG/center_{0,8:D8}.jpg", frameCounter);
-	}
-
-    string GetDonkeyStyleImageFilename()
-    {
-        float steering = car.GetSteering() / 25.0f;
-        float throttle = car.GetThrottle();
-        return GetLogPath() + string.Format("frame_{0,6:D6}_ttl_{1}_agl_{2}_mil_0.0.jpg", 
-            frameCounter, throttle, steering);
-    }
-
-	string GetSharkStyleImageFilename()
-    {
-        int steering = (int)(car.GetSteering() / 25.0f * 32768.0f);
-        int throttle = (int)(car.GetThrottle() * 32768.0f);
-        return GetLogPath() + string.Format("frame_{0,6:D6}_st_{1}_th_{2}.jpg", 
-            frameCounter, steering, throttle);
     }
 
     string GetDonkey2StyleImageFilename()
@@ -312,30 +330,12 @@ public class Logger : MonoBehaviour {
 
 				ij.bytes = image.EncodeToJPG();
 			}
-            else if (DonkeyStyle)
-            {
-                ij.filename = GetDonkeyStyleImageFilename();
-
-                ij.bytes = image.EncodeToJPG();
-            }
             else if (DonkeyStyle2)
             {
                 ij.filename = GetDonkey2StyleImageFilename();
 
                 ij.bytes = image.EncodeToJPG();
             }
-			else if(SharkStyle)
-            {
-                ij.filename = GetSharkStyleImageFilename();
-
-                ij.bytes = image.EncodeToJPG();
-            }
-			else
-			{
-            	ij.filename = GetLogPath() + string.Format("{0}_{1,8:D8}{2}.png", prefix, frameCounter, suffix);
-
-            	ij.bytes = image.EncodeToPNG();
-			}
 
             lock (this)
             {
