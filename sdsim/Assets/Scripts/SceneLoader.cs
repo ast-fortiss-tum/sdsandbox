@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using SimpleFileBrowser;
-public class SceneLoader : MonoBehaviour {
 
-public void LoadGenerateRoadScene()
-{
-    SceneManager.LoadSceneAsync(1);
-}
+public class SceneLoader : MonoBehaviour {
 
 public void LoadMenuScene()
 {
     SceneManager.LoadSceneAsync(0);
+}
+
+public void LoadGenerateRoadScene()
+{
+    SceneManager.LoadSceneAsync(1);
 }
 
 public void LoadGeneratedTrackScene()

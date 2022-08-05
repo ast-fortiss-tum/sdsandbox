@@ -393,7 +393,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: afe776aeb50185a4ba2e823fc7d9a359, type: 3}
+  m_Texture: {fileID: 2800000, guid: 417744d41caf94185b5fbda9872936cb, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1024,7 +1024,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: ac445defc7bb96243b78995bdc227bc0, type: 3}
+  m_Texture: {fileID: 2800000, guid: 4786dd5d1e9a047da821b38999d7d635, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1313,7 +1313,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Generated Road
+  m_Text: Formula USI - Train
 --- !u!222 &780326233
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1537,7 +1537,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Generated Track
+  m_Text: Formula USI - Test
 --- !u!222 &922781287
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3169,7 +3169,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: DonkeyCar Simulator (Crossroad version)
+  m_Text: Formula USI version
 --- !u!222 &2080155096
 CanvasRenderer:
   m_ObjectHideFlags: 0
