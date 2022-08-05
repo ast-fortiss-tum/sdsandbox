@@ -16,6 +16,7 @@ public class PointPathStorer : MonoBehaviour
         {
             text += waypoint.transform.position.x + "," + waypoint.transform.position.y + "," + waypoint.transform.position.z;
             text += '\n';
+            //Debug.Log(text);
         }
 
         System.IO.File.WriteAllText("Assets/Resources/LatestWaypoints.txt", text);

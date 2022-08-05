@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RoadBuilder : MonoBehaviour {
 
-	public float roadWidth = 1.0f;
+	public float roadWidth = 3.0f;
 	public float roadHeightOffset = 0.0f;
 	public float roadOffsetW = 0.0f;
 	public bool doFlattenAtStart = true;

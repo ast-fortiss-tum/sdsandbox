@@ -21,8 +21,9 @@ public class MenuHandler : MonoBehaviour {
         //keep it processing even when not in focus.
         Application.runInBackground = true;
 
-        //Set desired frame rate as high as possible.
-        Application.targetFrameRate = 60;
+        //Set desired frame rate the same as the Donkey car (~21 fps)
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 21;
 
         //auto link
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
@@ -85,6 +86,9 @@ public class MenuHandler : MonoBehaviour {
 
 	public void OnUseNNNetworkSteering()
 	{
+        if(Logger != null)
+		    Logger.SetActive(true);
+
 		if(carJSControl != null)
 			carJSControl.SetActive(false);
 

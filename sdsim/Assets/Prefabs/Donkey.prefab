@@ -1628,7 +1628,7 @@ MonoBehaviour:
   lastSteer: 0
   lastAccel: 0
   activity: keep_lane
-  maxSteer: 7
+  maxSteer: 25
   last_collision_name: none
 --- !u!114 &114314152752413966
 MonoBehaviour:
@@ -3178,9 +3178,7 @@ MonoBehaviour:
   maxFramesToLog: 50000
   bDoLog: 1
   limitFPS: 60
-  SharkStyle: 0
   UdacityStyle: 0
-  DonkeyStyle: 0
   DonkeyStyle2: 1
   logDisplay: {fileID: 0}
 --- !u!1 &1728914787495476

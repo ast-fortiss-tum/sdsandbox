@@ -36,7 +36,7 @@ public class Car : MonoBehaviour, ICar {
 	//use this label to pull partial training samples from a run 
 	public string activity = "keep_lane";
 
-    public float maxSteer = 16.0f;
+    public float maxSteer = 25.0f;
 
 	//name of the last object we hit.
 	public Collision last_collision = null;
@@ -56,9 +56,7 @@ public class Car : MonoBehaviour, ICar {
 		requestSteering = 0f;
 
 		SavePosRot();
-
-        maxSteer = PlayerPrefs.GetFloat("max_steer", 16.0f);       
-	}
+    }
 
 	public void SavePosRot()
 	{
@@ -178,7 +176,7 @@ public class Car : MonoBehaviour, ICar {
 
 	public void RequestHandBrake(float val)
 	{
-		//todo
+		// todo
 	}
 	
 	// Update is called once per frame

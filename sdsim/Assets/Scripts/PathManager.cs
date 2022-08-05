@@ -12,11 +12,11 @@ public class PathManager : MonoBehaviour {
 
 	Vector3 span = Vector3.zero;
 
-	public float spanDist = 5f;
+	public float spanDist;
 
-	public int numSpans = 100;
+	public int numSpans;
 
-	public float turnInc = 1f;
+    public float turnInc;
 
 	public bool sameRandomPath = true;
 
@@ -49,7 +49,11 @@ public class PathManager : MonoBehaviour {
 
 	void Awake () 
 	{
-		if(sameRandomPath)
+		numSpans = 200;
+		spanDist = 2f;
+		turnInc = 1f;
+
+		if (sameRandomPath)
 			Random.InitState(randSeed);
 
 		InitNewRoad();
@@ -95,6 +99,7 @@ public class PathManager : MonoBehaviour {
 				go.transform.parent = this.transform;
 				go.GetComponent<LocationMarker>().id = iLocId;
 				iLocId++;
+                go.tag = "pathNode";
 			}
 		}
 

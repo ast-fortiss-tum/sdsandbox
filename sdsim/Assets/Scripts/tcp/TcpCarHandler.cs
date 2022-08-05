@@ -19,10 +19,10 @@ namespace tk
         private tk.JsonTcpClient client;
         public Text ai_text;
 
-        public float limitFPS = 20.0f;
+        public float limitFPS = 21.0f;
         float timeSinceLastCapture = 0.0f;
 
-        float steer_to_angle = 16.0f;
+        float steer_to_angle = 25.0f;
 
         float ai_steering = 0.0f;
         float ai_throttle = 0.0f;
@@ -44,6 +44,9 @@ namespace tk
 
         void Awake()
         {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = (int)limitFPS;
+
             car = carObj.GetComponent<ICar>();
             pm = GameObject.FindObjectOfType<PathManager>();
 
@@ -105,7 +108,7 @@ namespace tk
             json.AddField("steering_angle", car.GetSteering() / steer_to_angle);
             json.AddField("throttle", car.GetThrottle());
             json.AddField("speed", car.GetVelocity().magnitude);
-            json.AddField("image", System.Convert.ToBase64String(camSensor.GetImageBytes()));
+            json.AddField("image", Convert.ToBase64String(camSensor.GetImageBytes()));
 
             json.AddField("hit", car.GetLastCollisionName());
             car.ClearLastCollision();
@@ -117,7 +120,10 @@ namespace tk
 
             json.AddField("time", Time.timeSinceLevelLoad);
 
-            if(pm != null)
+            json.AddField("lap", StatsDisplayer.getLap());
+            json.AddField("sector", StatsDisplayer.getCurrentWaypoint());
+
+            if (pm != null)
             {
                 float cte = 0.0f;
                 if(pm.path.GetCrossTrackErr(tm.position, ref cte))
